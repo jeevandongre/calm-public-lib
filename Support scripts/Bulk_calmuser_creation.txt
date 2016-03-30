@@ -1,0 +1,278 @@
+Instructions:
+
+1. Ssh to calm Server -> Goto epr/epc.
+2. Type cshell.py press enter and type in admin password.
+3. Create a users.csv file with list of users in CSV(coma seperated values).
+4. Also create necessary teams using calm(styx) console.
+5. You can see "In [1]:" prompt, type in %cpaste.
+6. Copy paste the given CreateBulkusers.py content and give "--" at the next line then press enter.
+7. If any errors in CSV file it will exit showing the line number.
+8. Else it creates users successfully.
+
+
+Sample CSV and script execution text file below:
+
+CSV Headers:
+
+No header row in CSV File
+
+Below are columns:
+ User Id
+ Password
+ Full Name
+ Email
+ Role
+ Team
+
+
+Script:
+
+
+import csv
+import sys
+from calm.lib import User, Team
+from calm.lib.constants import USER
+
+userexists=[]
+users={}
+errors=[]
+def CheckUser(username=None):
+       try:
+               user = User.objects(username=username)
+               if user:
+                       userexists.append(username)
+               return(0,None)
+       except:
+               return(1,"Error querying for user: {} ".format(username))
+
+def CheckTeam(name=None):
+       try:
+               team = Team.objects(name=name)
+               if not team:
+                       return(1,"Team '{}' dosen't exists ".format(name))
+               return(0,None)
+       except:
+               return(1,"Error querying for team: {} ".format(name))
+
+def ValidateCsv(username=None,password=None,fullname=None,email=None,role=None,team=None):
+       if not username or not password or not fullname or not email or not role or not team:
+               msg="Mandatory parameters are missing for {} ".format(username)
+               return(1,msg)
+       statuscode,err = CheckUser(username=username)
+       if statuscode != 0 and err != None:
+               return(statuscode,err)
+       statuscode,err = CheckTeam(name=team)
+       if statuscode != 0 and err != None:
+               return(statuscode,err)
+       if not (role.lower() == 'admin' or role.lower() == 'superadmin' or role.lower() == 'consumer'):
+               msg="Role can be 'admin','superadmin','consumer' for {} ".format(username)
+               return(1,msg)
+       return(0,None)
+
+def CreateUser(username=None,password=None,fullname=None,email=None,role=None,team=None):
+       try:
+               u = User.new()
+               u.username = username
+               u.password = password
+               u.fullname = fullname
+               if role.lower() == 'admin':
+                   u.role = USER.ROLE.ADMIN
+               elif role.lower() == 'superadmin':
+                   u.role = USER.ROLE.SUPERADMIN
+               elif role.lower() == 'consumer':
+                   u.role = USER.ROLE.CONSUMER
+               u.type_ = USER.TYPE.LOCAL
+               u.register_token=None
+               u.email=email
+               u.state = USER.STATE.ACTIVE
+               u.save()
+               t = Team.objects(name=team)[0]
+               t.users.append(u)
+               t.save()
+       except:
+               msg="Unable to create user: {} ".format(username)
+               return(1,msg)
+       return(0,None)
+try:
+       count = 0
+       csvfile = open('users.csv','rb')
+       reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+       for row in reader:
+           if len(row) != 0:
+               count = count + 1
+               users.update({count:row})
+except:
+        print "Unable to open the file."
+for u in users:
+       row=users[u]
+       statuscode,err = ValidateCsv(username=row[0],password=row[1],fullname=row[2],email=row[3],role=row[4],team=row[5])
+       if statuscode != 0 and err != None:
+                       errors.append(str(err) + "at line {}".format(u))
+if len(userexists) != 0:
+       errors.append("Users : '{}' already exists.".format(', '.join(str(x) for x in userexists)))
+
+if len(errors) != 0:
+       print "\n".join(errors)
+       sys.exit(1)
+
+for u in users:
+       row=users[u]
+       statuscode,err = CreateUser(username=row[0],password=row[1],fullname=row[2],email=row[3],role=row[4],team=row[5])
+       if statuscode != 0 and err != None:
+                errors.append(str(err) + "at line {}.".format(u))
+if len(errors) != 0:
+       print "\n".join(errors)
+       sys.exit(1)
+
+print "Users created successfully"
+
+
+
+
+
+
+
+
+
+Sample users.csv
+
+user210,pass@word1,User210,user210@test.com,consumer,Administrator Team,
+user211,pass@word1,User211,user211@test.com,superadmin,OPS,
+user212,pass@word1,User212,user212@test.com,consumer,OPS,
+user213,pass@word1,User213,user213@test.com,consumer,OPS,
+user214,pass@word1,User214,user214@test.com,consumer,Administrator Team,
+user215,pass@word1,User215,user215@test.com,superadmin,OPS,
+user216,pass@word1,User216,user216@test.com,consumer,OPS,
+user217,pass@word1,user217,user217@test.com,consumer,OPS,
+user218,pass@word1,User218,user218@test.com,superadmin,OPS,
+user219,pass@word1,User219,user219@test.com,consumer,Test,
+
+
+
+
+
+
+
+Sample script execution ouput
+
+root@calm:~# epr
+[12:32:16] (virtual) [/opt/id/epsilon]
+root@calm:/# vi users.csv
+[12:38:07] (virtual) [/opt/id/epsilon]
+root@calm:/# cshell.py
+2016-02-26 12:38:11,497 [DEBUG] retry:155: Converted retries value: 3 -> Retry(total=3, connect=None, read=None, redirect=None)
+admin password:
+2016-02-26 12:38:15,064 [DEBUG] engine:66: Initializing CalmEngine Interface with timeout 60
+
+    Calm Shell
+    ----------------------------
+
+    Available objects:
+
+    engine  : calm.engine
+    lib     : calm.lib
+    db      : mongoengine handle
+
+
+In [1]: %cpaste
+Pasting code; enter '--' alone on the line to stop or use Ctrl-D.
+:import csv
+:import sys
+:from calm.lib import User, Team
+:from calm.lib.constants import USER
+:
+:userexists=[]
+:users={}
+:errors=[]
+:def CheckUser(username=None):
+:       try:
+:               user = User.objects(username=username)
+:               if user:
+:                       userexists.append(username)
+:               return(0,None)
+:       except:
+:               return(1,"Error querying for user: {} ".format(username))
+:
+:def CheckTeam(name=None):
+:       try:
+:               team = Team.objects(name=name)
+:               if not team:
+:                       return(1,"Team '{}' dosen't exists ".format(name))
+:               return(0,None)
+:       except:
+:               return(1,"Error querying for team: {} ".format(name))
+:
+:def ValidateCsv(username=None,password=None,fullname=None,email=None,role=None,team=None):
+:       if not username or not password or not fullname or not email or not role or not team:
+:               msg="Mandatory parameters are missing for {} ".format(username)
+:               return(1,msg)
+:       statuscode,err = CheckUser(username=username)
+:       if statuscode != 0 and err != None:
+:               return(statuscode,err)
+:       statuscode,err = CheckTeam(name=team)
+:       if statuscode != 0 and err != None:
+:               return(statuscode,err)
+:       if not (role.lower() == 'admin' or role.lower() == 'superadmin' or role.lower() == 'consumer'):
+:               msg="Role can be 'admin','superadmin','consumer' for {} ".format(username)
+:               return(1,msg)
+:       return(0,None)
+:
+:def CreateUser(username=None,password=None,fullname=None,email=None,role=None,team=None):
+:       try:
+:               u = User.new()
+:               u.username = username
+:               u.password = password
+:               u.fullname = fullname
+:               if role.lower() == 'admin':
+:                   u.role = USER.ROLE.ADMIN
+:               elif role.lower() == 'superadmin':
+:                   u.role = USER.ROLE.SUPERADMIN
+:               elif role.lower() == 'consumer':
+:                   u.role = USER.ROLE.CONSUMER
+:               u.type_ = USER.TYPE.LOCAL
+:               u.register_token=None
+:               u.email=email
+:               u.state = USER.STATE.ACTIVE
+:               u.save()
+:               t = Team.objects(name=team)[0]
+:               t.users.append(u)
+:               t.save()
+:       except:
+:               msg="Unable to create user: {} ".format(username)
+:               return(1,msg)
+:       return(0,None)
+:try:
+:       count = 0
+:       csvfile = open('users.csv','rb')
+:       reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+:       for row in reader:
+:           if len(row) != 0:
+:               count = count + 1
+:               users.update({count:row})
+:except:
+:        print "Unable to open the file."
+:for u in users:
+:       row=users[u]
+:       statuscode,err = ValidateCsv(username=row[0],password=row[1],fullname=row[2],email=row[3],role=row[4],team=row[5])
+:       if statuscode != 0 and err != None:
+:                       errors.append(str(err) + "at line {}".format(u))
+:if len(userexists) != 0:
+:       errors.append("Users : '{}' already exists.".format(', '.join(str(x) for x in userexists)))
+:
+:if len(errors) != 0:
+:       print "\n".join(errors)
+:       sys.exit(1)
+:
+:for u in users:
+:       row=users[u]
+:       statuscode,err = CreateUser(username=row[0],password=row[1],fullname=row[2],email=row[3],role=row[4],team=row[5])
+:       if statuscode != 0 and err != None:
+:                errors.append(str(err) + "at line {}.".format(u))
+:if len(errors) != 0:
+:       print "\n".join(errors)
+:       sys.exit(1)
+:
+:print "Users created successfuly"
+:--
+
+Users created sucessfully

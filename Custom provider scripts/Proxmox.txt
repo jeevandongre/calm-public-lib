@@ -1,0 +1,6 @@
+Delete script
+
+#! /bin/bash
+
+qm stop @@{PVID}@@
+qm destroy @@{PVID}@@

@@ -1,0 +1,100 @@
+{
+  "Description" : "Creates a security group and IAM user required for calm",
+  "Resources": {
+    "CalmSG": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription" : "Enable CALM ports",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : "0.0.0.0/0"
+        } ,
+        {
+          "IpProtocol" : "tcp",
+          "FromPort" : "443",
+          "ToPort" : "443",
+          "CidrIp" : "0.0.0.0/0"
+        } ,
+        {
+          "IpProtocol" : "tcp",
+          "FromPort" : "80",
+          "ToPort" : "80",
+          "CidrIp" : "0.0.0.0/0"
+        }]
+
+      }
+    },
+    "CALMUSER" : {
+      "Type" : "AWS::IAM::User"
+    },
+    "CALMGroup" : {
+      "Type" : "AWS::IAM::Group"
+    },
+    "CALMGROUPADD" : {
+      "Type" : "AWS::IAM::UserToGroupAddition",
+      "Properties" : {
+        "GroupName": { "Ref" : "CALMGroup" },
+        "Users" : [ { "Ref" : "CALMUSER" } ]
+      }
+    },
+    "CALMUserPolicies" : {
+      "Type" : "AWS::IAM::Policy",
+      "Properties" : {
+        "PolicyName" : "CALMPolicy",
+        "PolicyDocument" : {
+         "Version": "2012-10-17",
+         "Statement": [
+         {
+           "Action": "ec2:*",
+           "Effect": "Allow",
+           "Resource": "*"
+         },
+         {
+           "Effect": "Allow",
+           "Action": "elasticloadbalancing:*",
+           "Resource": "*"
+          },
+         {
+           "Effect": "Allow",
+           "Action": "cloudwatch:*",
+           "Resource": "*"
+         },
+         {
+           "Effect": "Allow",
+           "Action": "autoscaling:*",
+           "Resource": "*"
+          },
+          {
+           "Effect": "Allow",
+           "Action": [
+           "iam:GenerateCredentialReport",
+           "iam:Get*",
+           "iam:List*"
+           ],
+          "Resource": "*"
+          }
+          ]
+        },
+        "Groups" : [{ "Ref" : "CALMGroup" }]
+      }
+    },
+    "CALMIAM": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName" : { "Ref": "CALMUSER" }
+      }
+    }
+  },
+  "Outputs" : {
+    "AccessKey" : {
+      "Value" : { "Ref" : "CALMIAM" },
+      "Description" : "AWSAccessKeyId of new user"
+    },
+    "SecretKey" : {
+      "Value" : { "Fn::GetAtt" : ["CALMIAM", "SecretAccessKey"]},
+      "Description" : "AWSSecretKey of new user"
+    }
+  }
+}

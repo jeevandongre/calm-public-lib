@@ -1,0 +1,133 @@
+Input arguments:
+
+ACCESS_ID
+SECRET_KEY
+LOADBALANCERNAME
+LOADBALANCERPROTOCOL
+LOADBALANCERPORT
+INSTANCEPROTOCOL
+INSTANCEPORT
+SUBNETS
+INSTANCEIDS
+SECURITYGROUPS
+SCHEME
+TAGS
+HEALTHCHECKTARGET
+HEATLHCHECKINTERVAL
+HEATLHCHECKTIMEOUT
+HEATLHCHECKUNHEALTHYTHRESHOLD
+HEATLHCHECKHEALTHYTHRESHOLD
+
+
+Provision script:
+ Type: Python
+ Requires : boto3
+
+
+ #!/usr/bin/python
+from boto3.session import Session
+
+session = Session(aws_access_key_id='@@{ACCESS_ID}@@',
+                  aws_secret_access_key='@@{SECRET_KEY}@@',
+                  region_name='ap-southeast-1')
+
+#create load balancer
+client = session.client('elb')
+response1 = client.create_load_balancer(
+    LoadBalancerName='@@{LOADBALANCERNAME}@@',
+    Listeners=[
+        {
+            'Protocol': '@@{LOADBALANCERPROTOCOL}@@',
+            'LoadBalancerPort': @@{LOADBALANCERPORT}@@,
+            'InstanceProtocol': '@@{INSTANCEPROTOCOL}@@',
+            'InstancePort': @@{INSTANCEPORT}@@,
+        },
+    ],
+   
+     Subnets=[
+        '@@{SUBNETS}@@',
+    ],
+     SecurityGroups=[
+        '@@{SECURITYGROUPS}@@',
+    ],
+    Scheme='@@{SCHEME}@@',
+  
+)
+
+#point to instances
+response2 = client.register_instances_with_load_balancer(
+    LoadBalancerName='@@{LOADBALANCERNAME}@@',
+    Instances=[
+        {
+            'InstanceId': '@@{INSTANCEIDS}@@'
+        },
+    ]
+)
+
+print "ELBDNSNAME=",response1['DNSName']
+
+#Add health check parameters
+response3 = client.configure_health_check(
+    LoadBalancerName='@@{LOADBALANCERNAME}@@',
+    HealthCheck={
+        'Target': '@@{HEALTHCHECKTARGET}@@',
+        'Interval': @@{HEATLHCHECKINTERVAL}@@,
+        'Timeout': @@{HEATLHCHECKTIMEOUT}@@,
+        'UnhealthyThreshold': @@{HEATLHCHECKUNHEALTHYTHRESHOLD}@@,
+        'HealthyThreshold': @@{HEATLHCHECKHEALTHYTHRESHOLD}@@,
+    }
+)
+
+#Add tags
+
+tags="@@{TAGS}@@"
+tags=tags.split(',')
+for i in tags:
+  i=i.split(':')
+  response5 = client.add_tags(
+    LoadBalancerNames=[
+        '@@{LOADBALANCERNAME}@@',
+    ],
+    Tags=[
+        {
+            'Key': str(i[0]),
+            'Value': str(i[1])
+        },
+    ]
+)
+
+
+
+
+
+Output arguments:
+
+ELBDNSNAME
+
+
+
+Delete script:
+
+Type: Python
+Requires : boto3
+
+
+#!/usr/bin/python
+from boto3.session import Session
+import time
+import sys
+session = Session(aws_access_key_id='@@{ACCESS_ID}@@',
+                  aws_secret_access_key='@@{SECRET_KEY}@@',
+                  region_name='us-east-1')
+
+client = session.client('elb')
+try:
+  response = client.delete_load_balancer(
+    LoadBalancerName='@@{LOADBALANCERNAME}@@'
+  )
+except:
+  print "Load balancer not created"
+  exit(0)
+
+
+

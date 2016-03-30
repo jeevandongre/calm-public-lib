@@ -1,0 +1,76 @@
+Input arguments:
+
+DROPLET_NAME
+
+Provision script:
+ Type : Python
+
+ Requires: Digital ocean python library
+
+
+
+ #!/usr/local/bin/python
+
+import digitalocean
+import time
+
+droplet = digitalocean.Droplet(token="<token>",
+        name="@@{DROPLET_NAME}@@",
+                                region='nyc3',
+                                image=15061978,
+                                ssh_keys=[1611798,1621219,1630871],
+                                size_slug='1gb',
+                                backups=False)
+
+droplet.create()
+
+status = "in-progress"
+
+actions = droplet.get_actions()
+
+for action in actions:
+  while action.status != "completed":
+        action.load()
+
+print action.status
+
+print "DROPLET_ID=%s" % (droplet.id)
+
+manager = digitalocean.Manager(token="<token>")
+
+droplet1 = manager.get_droplet(droplet.id)
+
+print "DROPLET_IP=%s" % (droplet1.ip_address)
+time.sleep(60)
+
+
+
+Output arguments:
+
+DROPLET_ID
+DROPLET_IP
+
+
+Delete script:
+ Type: Python
+ Requires : digital ocean python library
+
+
+
+#!/usr/local/bin/python
+
+import digitalocean
+
+droplet = digitalocean.Droplet(token="<token>",
+                id=@@{DROPLET_ID}@@)
+                                
+droplet.destroy()
+
+actions = droplet.get_actions()
+
+for action in actions:
+  while action.status != "completed":
+        action.load()
+        
+print action.status
+

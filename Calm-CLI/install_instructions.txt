@@ -1,0 +1,18 @@
+#install python package
+pip install calmio*
+
+#make calm config directory
+mkdir .calm
+touch .calm/config
+
+#copy the config with details
+echo "[calm]
+host: <Calm host> [Example: https://demo.calm.io]
+username: <Calm username>
+password: <Calm password>
+api_version: 1
+default_environment: default" | tee .calm/config
+
+#few sample commands
+calm test-login
+calm blueprint list
