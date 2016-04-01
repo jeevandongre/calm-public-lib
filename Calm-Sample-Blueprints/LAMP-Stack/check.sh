@@ -38,5 +38,5 @@ echo "Content-Type: text/html"
 echo "" 
 echo "$html"
 echo "------some.unique.value.ABC123/server.xyz.com--"
-) | sendmail -t
+) | /usr/sbin/sendmail -t
 fi
