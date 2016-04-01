@@ -1,7 +1,7 @@
 #!/bin/bash
 # Download and Install the Latest Updates for the OS
 rootpass='Pass@word1'
-apt-get update && apt-get upgrade -y
+apt-get update 
 
 # Set the Server Timezone to CST
 echo "Asia/Kolkata" > /etc/timezone
