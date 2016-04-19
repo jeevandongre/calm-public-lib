@@ -23,26 +23,25 @@ Provision script:
 
 
 import boto3
+from boto3 import Session
 session = Session(aws_access_key_id='@@{ACCESS_ID}@@',
                   aws_secret_access_key='@@{SECRET_KEY}@@',
-                  region_name='ap-southeast-1')
+                  region_name='us-east-1')
 
 client = session.client('ec2')
 ec2 = session.client('ec2')
 
-for instance in ec2.instances.all():
-  print(instance.id)
 #Create VPC , subnets based on given args
 vpc = ec2.create_vpc(CidrBlock='@@{VPCCIDR}@@')
-client.create_tags(Resources=[vpc.id],Tags=[{'Key':'Name','Value':'@@{VPCNAME}@@'}])
+client.create_tags(Resources=[vpc['Vpc']['VpcId']],Tags=[{'Key':'Name','Value':'@@{VPCNAME}@@'}])
 subnetpriv = vpc.create_subnet(CidrBlock='@@{PRIVATESUBNETCIDR}@@')
 subnetpub = vpc.create_subnet(CidrBlock='@@{PUBLICSUBNETCIDR}@@')
 #Gateway needs to be created first and attached to a VPC
 gateway = ec2.create_internet_gateway()
-response=gateway.attach_to_vpc(VpcId=vpc.id)
-print "vpc=",vpc.id
-print "privatesubnet=",subnetpriv.id
-print "publicsubnet=",subnetpub.id
+response=gateway.attach_to_vpc(VpcId=vpc['Vpc']['VpcId'])
+print "vpc=",vpc['Vpc']['VpcId']
+print "privatesubnet=",subnetpriv['Subnet']['subnet_id']
+print "publicsubnet=",subnetpub['Subnet']['subnet_id']
 print "gateway=",gateway.id
 #print "ip=localhost"
 #create route tables for private and public subnets. This will be assigned to subnet later
@@ -139,4 +138,3 @@ security_group.delete()
 
 vpc = ec2.Vpc('@@{vpcid}@@')
 vpc.delete()
-
