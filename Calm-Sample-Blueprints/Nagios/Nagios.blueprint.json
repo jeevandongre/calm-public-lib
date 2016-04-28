@@ -1,0 +1,260 @@
+{
+    "tasks":[
+        {
+            "uid":"5721f267a5979a3295b7987c",
+            "classification":"provision_aws_ec2",
+            "creation_time":1461762070,
+            "user_data":null,
+            "credential_id":"5721f267a5979a3295b7986b",
+            "keypair":"sarath",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-b52286d0",
+                    "uuid":"sg-06fb6e7e",
+                    "uid":"sg-06fb6e7e",
+                    "classification":null,
+                    "name":"Flocker"
+                }
+            ],
+            "subnet":"subnet-14fc2e3e",
+            "network":"vpc-b52286d0",
+            "zone":"us-east-1",
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":15,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1461842551,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "instance_name":"Nagios",
+            "instance_type":"t2.micro",
+            "critical":true
+        },
+        {
+            "uid":"5721f267a5979a3295b7987d",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo apt-get update && sudo apt-get upgrade -y\nsudo apt-get install -y debconf-utils tzdata\nsudo dpkg-reconfigure -f noninteractive tzdata\necho \"postfix postfix\/mailname string mail.calm.io\" | sudo debconf-set-selections\necho \"postfix postfix\/main_mailer_type string 'No configuration'\" | sudo debconf-set-selections\necho \"nagios3-cgi nagios3\/adminpassword Pass@word1\" | sudo debconf-set-selections\necho \"nagios3-cgi nagios3\/adminpassword-repeat Pass@word1\" | sudo debconf-set-selections\nsudo su - -c \"export DEBIAN_FRONTEND='noninteractive' ; apt-get install -y nagios3 nagios-plugins nagios-nrpe-server nagios-nrpe-plugin nagios3-core\"\nsudo htpasswd -b -c \/etc\/nagios3\/htpasswd.users nagiosadmin Pass@word1",
+            "creation_time":1461762087,
+            "credential_id":"5721f267a5979a3295b7986b",
+            "modification_time":1461842551,
+            "version":14,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"NagiosInstall"
+        }
+    ],
+    "uid":"5721f267a5979a3295b79869",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5720a89ba5979a11ece67ea1",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "cost":0.0,
+    "strategy_enabled":false,
+    "environment":"default",
+    "provider":null,
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5720a89ba5979a11ece67ea2",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.7.1",
+    "description":null,
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"5721f267a5979a3295b7986b",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1461758259,
+            "modification_time":1461842551,
+            "secret":null,
+            "version":23,
+            "name":"DEMO"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Nagios",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5720a89ba5979a11ece67ea3"
+    },
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"5720b816a5979a11ece6919b",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5721f267a5979a3295b7987c",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5720b816a5979a11ece6919e",
+                "classification":null,
+                "deploy":[
+                    "5721f267a5979a3295b7987d"
+                ]
+            },
+            "parent":"5721f267a5979a3295b79869",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "service_port":22,
+            "bp_id":"5721f267a5979a3295b79869",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Nagios",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"5720b816a5979a11ece6919c"
+            },
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5720b816a5979a11ece6919d",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":160.0,
+            "x":436.7678833008,
+            "os_type":"Linux"
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5720a89ba5979a11ece67ea4",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
