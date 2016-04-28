@@ -8,7 +8,6 @@ This blueprint creates an instance and installs jenkins.
 
 ##OS
  1. Ubuntu
- 
 
 ## Quick Start
  1. Upload the buleprint to calm.
