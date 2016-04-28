@@ -1,4 +1,4 @@
-# MONGO Replicaset Buleprint
+# Kubernetes 3 node Cluster Buleprint
 
 This blueprint creates a kubernetes cluster with given number of nodes.
 ##Infra
