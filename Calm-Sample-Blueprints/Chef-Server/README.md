@@ -1,4 +1,4 @@
-# Chef-Server Buleprint
+# Chef-Server Blueprint
 
 This blueprint creates an instance and installs chef-server.
 ##Infra

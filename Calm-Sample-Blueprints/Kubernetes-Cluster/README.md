@@ -1,4 +1,4 @@
-# Kubernetes 3 node Cluster Buleprint
+# Kubernetes 3 node Cluster Blueprint
 
 This blueprint creates a kubernetes cluster with given number of nodes.
 ##Infra

@@ -1,4 +1,4 @@
-# MONGO Replicaset Buleprint
+# MONGO Replicaset Blueprint
 
 This blueprint created 3 node mongo replicaset.
 

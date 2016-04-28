@@ -1,0 +1,260 @@
+{
+    "tasks":[
+        {
+            "uid":"5721f513a5979a329aa9cd00",
+            "classification":"provision_aws_ec2",
+            "creation_time":1461758259,
+            "user_data":null,
+            "credential_id":"5721f513a5979a329aa9ccf6",
+            "keypair":"sarath",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-b52286d0",
+                    "uuid":"sg-06fb6e7e",
+                    "uid":"sg-06fb6e7e",
+                    "classification":null,
+                    "name":"Flocker"
+                }
+            ],
+            "subnet":"subnet-14fc2e3e",
+            "network":"vpc-b52286d0",
+            "zone":"us-east-1",
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":35,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1461843233,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "instance_name":"Gitlab",
+            "instance_type":"t2.medium",
+            "critical":true
+        },
+        {
+            "uid":"5721f513a5979a329aa9cd01",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo apt-get update\necho \"postfix postfix\/mailname string your.hostname.com\" | sudo debconf-set-selections\necho \"postfix postfix\/main_mailer_type string 'No configuration'\" | sudo debconf-set-selections\nsudo apt-get install -y curl openssh-server ca-certificates postfix\ncurl -sS https:\/\/packages.gitlab.com\/install\/repositories\/gitlab\/gitlab-ce\/script.deb.sh | sudo bash\nsudo apt-get install -y gitlab-ce\nsudo gitlab-ctl reconfigure\n",
+            "creation_time":1461758416,
+            "credential_id":"5721f513a5979a329aa9ccf6",
+            "modification_time":1461843233,
+            "version":34,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"InstallGitLab"
+        }
+    ],
+    "uid":"5721f513a5979a329aa9ccf4",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5720a89ba5979a11ece67ea1",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "cost":0.0,
+    "strategy_enabled":false,
+    "environment":"default",
+    "provider":null,
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5720a89ba5979a11ece67ea2",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.7.1",
+    "description":null,
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"5721f513a5979a329aa9ccf6",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1461758259,
+            "modification_time":1461843233,
+            "secret":null,
+            "version":22,
+            "name":"DEMO"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Gitlab",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5720a89ba5979a11ece67ea3"
+    },
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"5720a8a4a5979a11ece67ec7",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5721f513a5979a329aa9cd00",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5720a8a4a5979a11ece67eca",
+                "classification":null,
+                "deploy":[
+                    "5721f513a5979a329aa9cd01"
+                ]
+            },
+            "parent":"5721f513a5979a329aa9ccf4",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "service_port":22,
+            "bp_id":"5721f513a5979a329aa9ccf4",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Gitlab",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"5720a8a4a5979a11ece67ec8"
+            },
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5720a8a4a5979a11ece67ec9",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":100.0,
+            "x":50.0,
+            "os_type":"Linux"
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5720a89ba5979a11ece67ea4",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
