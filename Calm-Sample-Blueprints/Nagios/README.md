@@ -1,6 +1,6 @@
 # Nagios Blueprint
 
-This blueprint creates a kubernetes cluster with given number of nodes.
+This blueprint creates an instance and installs nagios 3 server.
 ##Infra
  1.AWS
  2.Azure
