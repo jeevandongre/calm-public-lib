@@ -1,0 +1,275 @@
+{
+    "tasks":[
+        {
+            "uid":"5720abf1a5979a11fadfccbd",
+            "classification":"provision_aws_ec2",
+            "creation_time":1459925802,
+            "user_data":"#!\/bin\/bash\necho \"$(\/sbin\/ifconfig eth0 | grep inet\\ addr: | cut -d: -f2 | cut -d\\  -f1) $(hostname)\" >> \/etc\/hosts",
+            "credential_id":"5720abf1a5979a11fadfccbe",
+            "keypair":"sarath",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-b52286d0",
+                    "uuid":"sg-77e69e12",
+                    "uid":"sg-77e69e12",
+                    "classification":null,
+                    "name":"default"
+                }
+            ],
+            "subnet":"subnet-575eb80e",
+            "network":"vpc-b52286d0",
+            "zone":"us-east-1",
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":21,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-9fd93df4",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1461842176,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "instance_name":"chef-server",
+            "instance_type":"m3.large",
+            "critical":true
+        },
+        {
+            "uid":"5720abf1a5979a11fadfccbf",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\n# create required bootstrap dirs\/files\nsudo mkdir -p \/var\/chef\/cache \/var\/chef\/cookbooks\n# pull down this chef-server cookbook\nwget -qO- https:\/\/supermarket.chef.io\/cookbooks\/chef-server\/download | sudo tar xvzC \/var\/chef\/cookbooks\n# pull down dependency cookbooks\nfor dep in chef-ingredient yum-chef yum apt-chef apt packagecloud\ndo\n  wget -qO- https:\/\/supermarket.chef.io\/cookbooks\/${dep}\/download | sudo tar xvzC \/var\/chef\/cookbooks\ndone\n\ncat > \/tmp\/dna.json <<EOH\n{\n  \"chef-server\": {\n    \"api_fqdn\": \"chef-server\",\n    \"addons\": [\"manage\",\"reporting\",\"push-jobs-server\"],\n    \"version\": \"12.0.3\"\n  }\n}\nEOH\n\n# GO GO GO!!!\nsudo chef-solo -o 'recipe[chef-server::default],recipe[chef-server::addons]' -j \/tmp\/dna.json\n",
+            "creation_time":1460013088,
+            "credential_id":"5720abf1a5979a11fadfccbe",
+            "modification_time":1461842176,
+            "version":14,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Install-Chef-Server"
+        },
+        {
+            "uid":"5720abf1a5979a11fadfccc0",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\n# install chef-solo\ncurl -L https:\/\/www.chef.io\/chef\/install.sh | sudo bash",
+            "creation_time":1460023991,
+            "credential_id":"5720abf1a5979a11fadfccbe",
+            "modification_time":1461842176,
+            "version":10,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Install-Chef-Client"
+        }
+    ],
+    "uid":"5720abf1a5979a11fadfccc2",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5704b32aa5979a08d4c635f5",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "cost":0.0,
+    "strategy_enabled":false,
+    "environment":"default",
+    "provider":null,
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5704b32aa5979a08d4c635f6",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.7.1",
+    "description":null,
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"5720abf1a5979a11fadfccbe",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1459925802,
+            "modification_time":1461842176,
+            "secret":null,
+            "version":19,
+            "name":"chef-server"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Chef",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5704b32aa5979a08d4c635f7"
+    },
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"5704b32aa5979a08d4c635ea",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5720abf1a5979a11fadfccbd",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5704b32aa5979a08d4c635ed",
+                "classification":null,
+                "deploy":[
+                    "5720abf1a5979a11fadfccc0",
+                    "5720abf1a5979a11fadfccbf"
+                ]
+            },
+            "parent":"5720abf1a5979a11fadfccc2",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "service_port":22,
+            "bp_id":"5720abf1a5979a11fadfccc2",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Chef-Server",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"5704b32aa5979a08d4c635eb"
+            },
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5704b32aa5979a08d4c635ec",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":179.0,
+            "x":406.0,
+            "os_type":"Linux"
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5704b32aa5979a08d4c635f8",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
