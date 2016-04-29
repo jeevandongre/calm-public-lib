@@ -1,0 +1,260 @@
+{
+    "tasks":[
+        {
+            "uid":"5721bd7fa5979a09d5c85882",
+            "classification":"provision_aws_ec2",
+            "creation_time":1461828991,
+            "user_data":null,
+            "credential_id":"5721bdcba5979a09d43947bd",
+            "keypair":"surya",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-7bda531e",
+                    "uuid":"sg-b17d6ad4",
+                    "uid":"sg-b17d6ad4",
+                    "classification":null,
+                    "name":"default"
+                }
+            ],
+            "subnet":"subnet-f64ee081",
+            "network":"vpc-7bda531e",
+            "zone":"us-east-1",
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":9,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1461832976,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "instance_name":"puppet",
+            "instance_type":"m3.medium",
+            "critical":true
+        },
+        {
+            "uid":"5721be01a5979a09d5c858de",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\ncd \/tmp\/\nwget https:\/\/apt.puppetlabs.com\/puppetlabs-release-trusty.deb\nsudo dpkg -i puppetlabs-release-trusty.deb\nsudo apt-get update\nsudo apt-get -y install puppetmaster-passenger\nsudo service apache2 stop\necho \"Package: puppet puppet-common puppetmaster-passenger\nPin: version 3.8*\nPin-Priority: 501\" | sudo tee \/etc\/apt\/preferences.d\/00-puppet.pref\nsudo sed -i '\/templatedir\/d' \/etc\/puppet\/puppet.conf\nsudo sed -e 's#\\(\\[main\\]\\)#\\1\\ncertname = puppet#' -i \/etc\/puppet\/puppet.conf\nsudo sed -e \"s#\\(\\[main\\]\\)#\\1\\ndns_alt_names = puppet,`hostname`#\" -i \/etc\/puppet\/puppet.conf\nsudo touch \/etc\/puppet\/manifests\/site.pp\nsudo service apache2 start\n",
+            "creation_time":1461829121,
+            "credential_id":"5721bdcba5979a09d43947bd",
+            "modification_time":1461832976,
+            "version":7,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Puppet_master_installation"
+        }
+    ],
+    "uid":"5721bd7fa5979a09d5c85886",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5721bd7fa5979a09d5c85897",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "cost":0.0,
+    "strategy_enabled":false,
+    "environment":"default",
+    "provider":null,
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5721bd7fa5979a09d5c85898",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.7.1",
+    "description":null,
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"5721bdcba5979a09d43947bd",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1461829067,
+            "modification_time":1461832975,
+            "secret":null,
+            "version":4,
+            "name":"aws"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Puppet_mater_installation",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5721bd7fa5979a09d5c85899"
+    },
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"5721bd7fa5979a09d5c8588d",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5721bd7fa5979a09d5c85882",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5721bd7fa5979a09d5c85890",
+                "classification":null,
+                "deploy":[
+                    "5721be01a5979a09d5c858de"
+                ]
+            },
+            "parent":"5721bd7fa5979a09d5c85886",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "service_port":22,
+            "bp_id":"5721bd7fa5979a09d5c85886",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Puppet_master",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"5721bd7fa5979a09d5c8588e"
+            },
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5721bd7fa5979a09d5c8588f",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":249.5,
+            "x":335.0,
+            "os_type":"Linux"
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5721bd7fa5979a09d5c8589a",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
