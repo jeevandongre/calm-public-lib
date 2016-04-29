@@ -5,6 +5,8 @@ This blueprint creates an instance and installs chef-server.
  1.AWS
  2.Azure
  3.Openstack
+ 4.Vcenter
+ 5.Xenserver
 
 ##OS
  1. Centos
