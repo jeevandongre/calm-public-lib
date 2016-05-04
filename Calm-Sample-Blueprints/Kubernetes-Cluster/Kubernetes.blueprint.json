@@ -1,12 +1,12 @@
 {
     "tasks":[
         {
-            "uid":"5720a01ca5979a11fadfc415",
+            "uid":"572888d5a5979a09bd7e320b",
             "classification":"provision_aws_ec2",
             "creation_time":1461755933,
             "user_data":null,
-            "credential_id":"5720a3f7a5979a11fadfc57e",
-            "keypair":"sarath",
+            "credential_id":"572888d5a5979a09bd7e320c",
+            "keypair":"surya",
             "security_groups":[
                 {
                     "vpc_id":"vpc-b52286d0",
@@ -25,24 +25,24 @@
                     "Device":"\/dev\/sda1",
                     "delete_on_termination":true,
                     "volume_type":"standard",
-                    "Size":8
+                    "Size":30
                 },
                 "EBS":[
 
                 ]
             },
             "variable_cost":0.0,
-            "version":55,
+            "version":105,
             "editables":[
 
             ],
             "iam_role":null,
-            "ami":"ami-9333d6fe",
+            "ami":"ami-ebe20286",
             "tags":{
 
             },
             "fixed_cost":null,
-            "modification_time":1461841681,
+            "modification_time":1462368794,
             "public_ip":true,
             "shutdown_behavior":"terminate",
             "name":"Provision AWS EC2",
@@ -51,45 +51,13 @@
             "critical":true
         },
         {
-            "uid":"572199fba5979a08dc27ae83",
-            "classification":"provision_existing_machine",
-            "creation_time":1461819899,
-            "credential_id":"57219f9aa5979a08eb74be15",
-            "modification_time":1461841681,
-            "version":43,
-            "critical":true,
-            "editables":[
-
-            ],
-            "address":"localhost",
-            "name":"Existing Machine"
-        },
-        {
-            "uid":"57219a08a5979a08dc27aef9",
-            "classification":"eval",
-            "script":"#!\/usr\/bin\/python\nimport sys\n\nmaster,slaves=\"@@{KUBE_IPS}@@\".split(\",\",1)\nprint \"MASTER=%s\" % master\nprint \"SLAVES=%s\" % slaves\n",
-            "out_args":[
-                "MASTER",
-                "SLAVES"
-            ],
-            "creation_time":1461822899,
-            "credential_id":"57219f9aa5979a08eb74be15",
-            "modification_time":1461841681,
-            "version":40,
-            "critical":true,
-            "editables":[
-
-            ],
-            "name":"Get_Hostname"
-        },
-        {
-            "uid":"57219eb6a5979a08dc27b1f2",
+            "uid":"572888d5a5979a09bd7e3210",
             "classification":"runshell",
-            "script":"#!\/bin\/bash\ncat > \/tmp\/set-hostnames.py <<EOF\n#!\/usr\/bin\/python\nmaster=\"@@{MASTER_IP}@@\"\nslaves=\"@@{SLAVES_IPS}@@\"\nwith open(\"\/etc\/hosts\", \"a\") as hostsfile:\n  hostsfile.write(\"{} master\\n\".format(master))\n  count=0\n  for slave in slaves.split(','):\n    hostsfile.write(\"{} slave{}\\n\".format(slave, str(count)))\n    count += 1\nEOF\nsudo python \/tmp\/set-hostnames.py",
+            "script":"#!\/bin\/bash\ncat > \/tmp\/set-hostnames.py <<EOF\n#!\/usr\/bin\/python\nmaster,slaves=\"@@{calm_array_private_ip_address}@@\".split(\",\",1)\nwith open(\"\/etc\/hosts\", \"a\") as hostsfile:\n  hostsfile.write(\"#KUBE-START\\n\")\n  hostsfile.write(\"{} master\\n\".format(master))\n  count=1\n  for slave in slaves.split(','):\n    hostsfile.write(\"{} slave{}\\n\".format(slave, str(count)))\n    count += 1\n  hostsfile.write(\"#KUBE-END\\n\")\nEOF\nsudo sed -i -e '\/#KUBE-START\/,\/#KUBE-END\/c\\' \/etc\/hosts\nsudo python \/tmp\/set-hostnames.py",
             "creation_time":1461821135,
-            "credential_id":"5720a3f7a5979a11fadfc57e",
-            "modification_time":1461841681,
-            "version":30,
+            "credential_id":"572888d5a5979a09bd7e320c",
+            "modification_time":1462368794,
+            "version":80,
             "critical":false,
             "editables":[
 
@@ -97,21 +65,65 @@
             "name":"Deploy_Hostnames"
         },
         {
-            "uid":"5721d15ca5979a3295b78604",
+            "uid":"572888d5a5979a09bd7e3211",
             "classification":"runshell",
             "script":"#!\/bin\/bash\nset -ex\n\necho \"[virt7-docker-common-release]\nname=virt7-docker-common-release\nbaseurl=http:\/\/cbs.centos.org\/repos\/virt7-docker-common-release\/x86_64\/os\/\ngpgcheck=0\" | sudo tee \/etc\/yum.repos.d\/kubernetes.repo\nsudo yum update -y\nsudo yum -y install --enablerepo=virt7-docker-common-release kubernetes etcd\n\necho \"KUBE_ETCD_SERVERS='--etcd-servers=http:\/\/master:2379'\nKUBE_LOGTOSTDERR='--logtostderr=true'\nKUBE_LOG_LEVEL='--v=0'\nKUBE_ALLOW_PRIV='--allow-privileged=false'\" | sudo tee \/etc\/kubernetes\/config\n\nif [ \"@@{calm_array_index}@@\" == \"0\" ]; then\n\n  echo \"KUBE_API_ADDRESS='--address=0.0.0.0'\nKUBE_API_PORT='--port=8080'\nKUBE_MASTER='--master=http:\/\/master:8080'\nKUBELET_PORT='--kubelet-port=10250'\nKUBE_SERVICE_ADDRESSES='--service-cluster-ip-range=10.254.0.0\/16'\nKUBE_API_ARGS=''\" | sudo tee \/etc\/kubernetes\/apiserver\n\n  echo \"ETCD_NAME=default\nETCD_DATA_DIR='\/var\/lib\/etcd\/default.etcd'\nETCD_LISTEN_CLIENT_URLS='http:\/\/0.0.0.0:2379'\nETCD_ADVERTISE_CLIENT_URLS='http:\/\/master:2379'\" | sudo tee \/etc\/etcd\/etcd.conf\n\tfor SERVICES in etcd kube-apiserver kube-controller-manager kube-scheduler; do\n\t\tsudo systemctl restart $SERVICES\n\t\tsudo systemctl enable $SERVICES\n\t\tsudo systemctl status $SERVICES\n\tdone\n    sudo etcdctl mk \/kubernetes.io\/network\/config '{\"Network\":\"172.17.0.0\/16\"}'\n\nelse\n\n  echo \"KUBELET_ADDRESS='--address=0.0.0.0'\nKUBELET_PORT='--port=10250'\nKUBELET_HOSTNAME='--hostname-override=$(\/usr\/bin\/ec2metadata --local-ipv4)'\nKUBELET_API_SERVER='--api-servers=http:\/\/master:8080'\nKUBELET_ARGS=''\" | sudo tee \/etc\/kubernetes\/kubelet\n  sudo yum -y install flannel\n\n  echo \"FLANNEL_ETCD='http:\/\/$master:2379'\nFLANNEL_ETCD_KEY='\/kubernetes.io\/network'\" | sudo tee \/etc\/sysconfig\/flanneld\n\n  for SERVICES in kube-proxy kubelet docker; do\n    sudo systemctl restart $SERVICES\n    sudo systemctl enable $SERVICES\n    sudo systemctl status $SERVICES\n  done\n\nfi\n",
             "creation_time":1461834076,
-            "credential_id":"5720a3f7a5979a11fadfc57e",
-            "modification_time":1461841681,
-            "version":10,
+            "credential_id":"572888d5a5979a09bd7e320c",
+            "modification_time":1462368794,
+            "version":60,
             "critical":false,
             "editables":[
 
             ],
             "name":"InstallKubernetes"
+        },
+        {
+            "uid":"5728907aa5979a09bd7e346a",
+            "classification":"resource_action",
+            "creation_time":1462276218,
+            "action_type":"scale_up",
+            "credential_id":null,
+            "modification_time":1462368794,
+            "version":18,
+            "critical":true,
+            "editables":[
+
+            ],
+            "scale_by":"1",
+            "name":"Scale Up 1 - KubeCluster"
+        },
+        {
+            "uid":"5728909fa5979a09cd80a24f",
+            "classification":"resource_action",
+            "creation_time":1462276255,
+            "action_type":"scale_down",
+            "credential_id":null,
+            "modification_time":1462368794,
+            "version":17,
+            "critical":true,
+            "editables":[
+
+            ],
+            "scale_by":"1",
+            "name":"Scale Down 1 - KubeCluster"
+        },
+        {
+            "uid":"5728aa00a5979a09cd80b651",
+            "classification":"runshell",
+            "script":"#!\/usr\/bin\/python\nimport subprocess,sys\nif \"@@{calm_array_index}@@\" != \"0\":\n  sys.exit(0)\ninstance_names=\"@@{calm_array_private_dns_name}@@\"\nnode=instance_names.split(',')[-1].split('.')[0]\nprint node\nsubprocess.check_output(\"kubectl delete node {}\".format(node), shell=True)",
+            "creation_time":1462282752,
+            "credential_id":"572888d5a5979a09bd7e320c",
+            "modification_time":1462368794,
+            "version":12,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Delete nodes"
         }
     ],
-    "uid":"57209ff9a5979a11ece67b8d",
+    "uid":"572888d5a5979a09bd7e3215",
     "classification":"blueprint",
     "autoscale_config":{
         "post_flow":null,
@@ -147,72 +159,59 @@
         {
             "tasks":[
                 {
-                    "task_id":"5720a01ca5979a11fadfc415",
+                    "task_id":"5728907aa5979a09bd7e346a",
                     "rc_id":"cid:00000001",
-                    "uid":"57219e39a5979a08eb74bbfa",
+                    "uid":"5728907aa5979a09bd7e346b",
                     "classification":null
-                },
+                }
+            ],
+            "uid":"cid:00000002",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1462276202,
+            "edges":[
+
+            ],
+            "has_critical_tasks":true,
+            "modification_time":1462368794,
+            "version":0,
+            "flow_type":null,
+            "critical":true,
+            "name":"Scaleup"
+        },
+        {
+            "tasks":[
                 {
-                    "task_id":"572199fba5979a08dc27ae83",
-                    "rc_id":"cid:00000002",
-                    "uid":"57219e39a5979a08eb74bbff",
-                    "classification":null
-                },
-                {
-                    "task_id":"57219a08a5979a08dc27aef9",
-                    "rc_id":"cid:00000002",
-                    "uid":"57219e39a5979a08eb74bc01",
-                    "classification":null
-                },
-                {
-                    "task_id":"57219eb6a5979a08dc27b1f2",
+                    "task_id":"5728909fa5979a09cd80a24f",
                     "rc_id":"cid:00000001",
-                    "uid":"57219eb6a5979a08dc27b1f3",
+                    "uid":"5728909fa5979a09cd80a250",
                     "classification":null
                 },
                 {
-                    "task_id":"5721d15ca5979a3295b78604",
+                    "task_id":"5728aa00a5979a09cd80b651",
                     "rc_id":"cid:00000001",
-                    "uid":"5721d15ca5979a3295b78605",
+                    "uid":"5728aa00a5979a09cd80b652",
                     "classification":null
                 }
             ],
             "uid":"cid:00000003",
             "classification":null,
             "eta":-1,
-            "creation_time":1461821015,
+            "creation_time":1462276255,
             "edges":[
                 {
-                    "dest":"57219e39a5979a08eb74bc01",
-                    "src":"57219e39a5979a08eb74bbff",
-                    "uid":"57219e39a5979a08eb74bc02",
-                    "classification":null
-                },
-                {
-                    "dest":"57219e39a5979a08eb74bc01",
-                    "src":"57219e39a5979a08eb74bbfa",
-                    "uid":"57219e57a5979a08dc27b0d8",
-                    "classification":null
-                },
-                {
-                    "dest":"57219eb6a5979a08dc27b1f3",
-                    "src":"57219e39a5979a08eb74bc01",
-                    "uid":"57219ed5a5979a08dc27b278",
-                    "classification":null
-                },
-                {
-                    "dest":"5721d15ca5979a3295b78605",
-                    "src":"57219eb6a5979a08dc27b1f3",
-                    "uid":"5721d2cfa5979a329aa9be11",
+                    "dest":"5728909fa5979a09cd80a250",
+                    "src":"5728aa00a5979a09cd80b652",
+                    "uid":"5729b399a5979a09cd80d739",
                     "classification":null
                 }
             ],
             "has_critical_tasks":true,
-            "modification_time":1461841681,
+            "modification_time":1462368794,
             "version":0,
-            "flow_type":"ACTION",
+            "flow_type":null,
             "critical":true,
-            "name":"create-action"
+            "name":"Scaledown"
         }
     ],
     "dependencies":[
@@ -222,26 +221,14 @@
         {
             "username":"centos",
             "public_key":null,
-            "uid":"5720a3f7a5979a11fadfc57e",
+            "uid":"572888d5a5979a09bd7e320c",
             "classification":null,
             "secret_type":"ssh_key",
             "creation_time":1461756919,
-            "modification_time":1461841681,
+            "modification_time":1462368794,
             "secret":null,
-            "version":46,
+            "version":72,
             "name":"KUBE"
-        },
-        {
-            "username":"vagrant",
-            "public_key":null,
-            "uid":"57219f9aa5979a08eb74be15",
-            "classification":null,
-            "secret_type":"password",
-            "creation_time":1461821338,
-            "modification_time":1461841681,
-            "secret":null,
-            "version":28,
-            "name":"local"
         }
     ],
     "bp_id":null,
@@ -298,7 +285,7 @@
             },
             "cost":0.0,
             "strategy_enabled":false,
-            "provider":"5720a01ca5979a11fadfc415",
+            "provider":"572888d5a5979a09bd7e320b",
             "service_type":"ssh",
             "config":{
                 "setup":[
@@ -307,16 +294,16 @@
                 "uid":"5720a01da5979a11fadfc431",
                 "classification":null,
                 "deploy":[
-                    "57219eb6a5979a08dc27b1f2",
-                    "5721d15ca5979a3295b78604"
+                    "572888d5a5979a09bd7e3210",
+                    "572888d5a5979a09bd7e3211"
                 ]
             },
-            "parent":"5720a01ca5979a11fadfc416",
+            "parent":"572888d5a5979a09bd7e3212",
             "array_data":{
                 "tasks":[
 
                 ],
-                "uid":"5720a412a5979a11fadfc5c6",
+                "uid":"572888d5a5979a09bd7e3220",
                 "classification":"array",
                 "creation_time":1461756946,
                 "policy_rules":[
@@ -337,7 +324,7 @@
                 },
                 "cost":0.0,
                 "strategy_enabled":false,
-                "version":45,
+                "version":71,
                 "scale_down_task":null,
                 "provider":null,
                 "config":{
@@ -350,13 +337,13 @@
                     "uid":"5720a412a5979a11fadfc5e8",
                     "classification":null
                 },
-                "parent":"57209ff9a5979a11ece67b8d",
+                "parent":"572888d5a5979a09bd7e3215",
                 "scale_up_task":null,
                 "flows":[
 
                 ],
-                "modification_time":1461841681,
-                "bp_id":"57209ff9a5979a11ece67b8d",
+                "modification_time":1462368793,
+                "bp_id":"572888d5a5979a09bd7e3215",
                 "properties":[
 
                 ],
@@ -407,62 +394,12 @@
 
             ],
             "dependencies":[
-                {
-                    "key":"MASTER_IP",
-                    "uid":"57219e18a5979a08eb74ba82",
-                    "classification":null,
-                    "setter":{
-                        "source_id":"cid:00000002",
-                        "prop_id":"57219deba5979a08eb74b982",
-                        "uid":"57219e18a5979a08eb74bab0",
-                        "classification":null
-                    }
-                },
-                {
-                    "key":"SLAVES_IPS",
-                    "uid":"57219e18a5979a08eb74ba83",
-                    "classification":null,
-                    "setter":{
-                        "source_id":"cid:00000002",
-                        "prop_id":"57219deba5979a08eb74b983",
-                        "uid":"57219e18a5979a08eb74bab1",
-                        "classification":null
-                    }
-                }
+
             ],
             "service_port":22,
-            "bp_id":"57209ff9a5979a11ece67b8d",
+            "bp_id":"572888d5a5979a09bd7e3215",
             "properties":[
-                {
-                    "uid":"5720a53fa5979a11fadfc62e",
-                    "classification":null,
-                    "editable":false,
-                    "value":null,
-                    "key":"PRIVATE_IP",
-                    "property_description":null,
-                    "property_type":"EXTERNAL",
-                    "setter":{
-                        "source_id":"5720a01ca5979a11fadfc415",
-                        "uid":"5720a53fa5979a11fadfc658",
-                        "classification":null,
-                        "prop":"private_ip_address"
-                    }
-                },
-                {
-                    "uid":"5720a53fa5979a11fadfc62f",
-                    "classification":null,
-                    "editable":false,
-                    "value":null,
-                    "key":"PUBLIC_IP",
-                    "property_description":null,
-                    "property_type":"EXTERNAL",
-                    "setter":{
-                        "source_id":"5720a01ca5979a11fadfc415",
-                        "uid":"5720a53fa5979a11fadfc659",
-                        "classification":null,
-                        "prop":"public_ip_address"
-                    }
-                }
+
             ],
             "autoscale_enabled":false,
             "name":"KubeCluster",
@@ -503,127 +440,8 @@
                 ],
                 "initial_count":"1"
             },
-            "y":100.0,
-            "x":50.0,
-            "os_type":"Linux"
-        },
-        {
-            "tasks":[
-
-            ],
-            "uid":"cid:00000002",
-            "classification":"compute",
-            "address":null,
-            "credential_id":null,
-            "autoscale_config":{
-                "post_flow":null,
-                "cool_down_period":"1800",
-                "uid":"572199fba5979a08dc27aeb4",
-                "classification":null,
-                "alert_count":"1",
-                "max_count":"1",
-                "pre_flow":null,
-                "min_count":"1",
-                "listen_for":"external",
-                "scale_by":"1",
-                "alert_window":"1800"
-            },
-            "cost":0.0,
-            "strategy_enabled":false,
-            "provider":"572199fba5979a08dc27ae83",
-            "service_type":"ssh",
-            "config":{
-                "setup":[
-
-                ],
-                "uid":"572199fba5979a08dc27aeb7",
-                "classification":null,
-                "deploy":[
-                    "57219a08a5979a08dc27aef9"
-                ]
-            },
-            "parent":"57209ff9a5979a11ece67b8d",
-            "flows":[
-
-            ],
-            "dependencies":[
-                {
-                    "key":"KUBE_IPS",
-                    "uid":"57219db6a5979a08dc27af80",
-                    "classification":null,
-                    "setter":{
-                        "source_id":"cid:00000001",
-                        "prop_id":"5720a53fa5979a11fadfc62e",
-                        "uid":"57219db7a5979a08dc27afb8",
-                        "classification":null
-                    }
-                }
-            ],
-            "service_port":22,
-            "bp_id":"57209ff9a5979a11ece67b8d",
-            "properties":[
-                {
-                    "uid":"57219deba5979a08eb74b982",
-                    "classification":null,
-                    "editable":false,
-                    "value":"@@{MASTER}@@",
-                    "key":"MASTER_IP",
-                    "property_description":null,
-                    "property_type":"EXTERNAL",
-                    "setter":null
-                },
-                {
-                    "uid":"57219deba5979a08eb74b983",
-                    "classification":null,
-                    "editable":false,
-                    "value":"@@{SLAVES}@@",
-                    "key":"SLAVES_IPS",
-                    "property_description":null,
-                    "property_type":"EXTERNAL",
-                    "setter":null
-                }
-            ],
-            "autoscale_enabled":false,
-            "name":"Dummy",
-            "h":0.0,
-            "resiliency_config":{
-                "post_flow":null,
-                "cool_down_period":"1800",
-                "alert_window":"1800",
-                "classification":null,
-                "alert_count":"1",
-                "pre_flow":null,
-                "listen_for":"internal",
-                "uid":"572199fba5979a08dc27aeb5"
-            },
-            "resiliency_enabled":false,
-            "w":0.0,
-            "strategy_config":{
-                "post_flow":null,
-                "rollback_pre_flow":null,
-                "classification":null,
-                "rolling_factor":"100",
-                "initial_version":null,
-                "approval_flag":false,
-                "upgrade_flow":null,
-                "rollback_flow":null,
-                "pre_flow":null,
-                "rollback_post_flow":null,
-                "upgrade_type":"rolling_upgrade",
-                "uid":"572199fba5979a08dc27aeb6",
-                "users":[
-
-                ],
-                "teams":[
-
-                ],
-                "emails":[
-
-                ],
-                "initial_count":"1"
-            },
-            "y":280.0,
-            "x":124.5,
+            "y":116.0,
+            "x":237.0,
             "os_type":"Linux"
         }
     ],
