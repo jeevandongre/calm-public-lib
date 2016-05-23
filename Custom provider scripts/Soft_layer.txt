@@ -1,0 +1,80 @@
+Input arguments:
+
+HOSTNAME
+NOOFCPUS
+DISKSIZE
+MEMORYSIZE
+TAGS
+
+Provision script:
+ Type : Python
+
+ Requires: Soft layer python library
+ Note: Username and API key can be stored in .softlayer file in the user home directory. A sample .softlayer file contents are given at end of this file. The ssh_keys parameter values depends on the ssh key id uploaded on softlayer
+
+
+#!/usr/bin/python
+
+import SoftLayer
+from SoftLayer import VSManager, Client, SshKeyManager
+client = SoftLayer.create_client_from_env()
+vs = VSManager(client)
+sshkey=SshKeyManager(client)
+new_vsi = {
+    'domain': u'calm.io',
+    'hostname': u'@@{HOSTNAME}@@',
+    'datacenter': u'wdc01',
+    'dedicated': False,
+    'private': False,
+    'cpus': @@{NOOFCPUS}@@,
+    'os_code' : u'UBUNTU_LATEST',
+    'hourly': True,
+    'ssh_keys': [599111],
+    'disks': ('@@{DISKSIZE}@@',),
+    'local_disk': True,
+    'memory': @@{MEMORYSIZE}@@,
+    'tags': '@@{TAGS}@@'
+}
+
+vsi = vs.create_instance(**new_vsi)
+vs.wait_for_ready(vsi['id'], 10)
+for i in  vs.list_instances():
+  if i['id'] == vsi['id']:
+    print "IPADDRESS=",i['primaryIpAddress']
+
+print "VMID=",vsi['id']
+
+
+
+Output arguments:
+
+IPADDRESS
+VMID
+
+Delete script:
+ Type: Python
+ Requires : Soft layer python library
+
+
+
+#!/usr/bin/python
+
+import SoftLayer
+from SoftLayer import VSManager, Client, SshKeyManager
+client = SoftLayer.create_client_from_env()
+vs = VSManager(client)
+if '@@{VMID}@@' == '':
+ exit(0)
+vs.cancel_instance(@@{VMID}@@)
+
+
+
+
+
+Sample .softlayer file contents
+
+[softlayer]
+username = 
+api_key = 
+endpoint_url = https://api.softlayer.com/xmlrpc/v3/
+timeout = 40
