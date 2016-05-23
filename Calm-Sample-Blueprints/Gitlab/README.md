@@ -7,9 +7,7 @@ This blueprint creates an instance and installs gitlab-server.
  3.Openstack
 
 ##OS
- 1. Centos
- 2. Ubuntu
- 
+ 1. Ubuntu
 
 ## Quick Start
  1. Upload the buleprint to calm.
