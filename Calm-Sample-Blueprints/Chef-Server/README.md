@@ -14,7 +14,7 @@ This blueprint creates an instance and installs chef-server.
  
 
 ## Quick Start
- 1. Upload the buleprint to calm.
+ 1. Upload the blueprint to calm.
  2. Change Aws provider in overview tab.
  3. Change Credentials for chef-server under credentials tab.
  4. Deploy the blueprint.

@@ -10,7 +10,7 @@ This blueprint creates 3 instances and configures mysql replication.
  1. Ubuntu 
 
 ## Quick Start
- 1. Upload the buleprint to calm.
+ 1. Upload the blueprint to calm.
  2. Change Aws provider in overview tab.
  3. Change Credentials MYSQL, under credentials tab.
  4. Deploy the blueprint.
