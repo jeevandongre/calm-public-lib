@@ -1,11 +1,11 @@
 {
     "tasks":[
         {
-            "uid":"573e95850807a3965e986577",
+            "uid":"5742e70d0807a3c2bbc28937",
             "classification":"provision_aws_ec2",
             "creation_time":1463719371,
             "user_data":null,
-            "credential_id":"573e95cb0807a3965e9865b6",
+            "credential_id":"5742e70d0807a3c2bbc28930",
             "keypair":"sarath",
             "security_groups":[
                 {
@@ -32,7 +32,7 @@
                 ]
             },
             "variable_cost":0.0,
-            "version":25,
+            "version":40,
             "editables":[
 
             ],
@@ -42,7 +42,7 @@
 
             },
             "fixed_cost":null,
-            "modification_time":1463735062,
+            "modification_time":1464004871,
             "public_ip":true,
             "shutdown_behavior":"terminate",
             "name":"Provision AWS EC2",
@@ -51,13 +51,13 @@
             "critical":true
         },
         {
-            "uid":"573e96e20807a302cb658900",
+            "uid":"5742e70d0807a3c2bbc28938",
             "classification":"runshell",
             "script":"#!\/bin\/bash\nsudo apt-get update\nsudo apt-get install build-essential curl git vim -y\ncurl -# -L http:\/\/www.opscode.com\/chef\/install.sh | sudo bash -s --\nsudo mkdir -p \/var\/chef\/cache \/var\/chef\/cookbooks\nwget -qO- https:\/\/supermarket.chef.io\/cookbooks\/mysql-multi\/download | sudo tar xvzC \/var\/chef\/cookbooks\nsudo \/opt\/chef\/embedded\/bin\/gem install berkshelf\nsudo \/opt\/chef\/embedded\/bin\/berks vendor \/var\/chef\/cookbooks --berksfile=\/var\/chef\/cookbooks\/mysql-multi\/Berksfile\n",
             "creation_time":1463719650,
-            "credential_id":"573e95cb0807a3965e9865b6",
-            "modification_time":1463735062,
-            "version":24,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":39,
             "critical":false,
             "editables":[
 
@@ -65,27 +65,13 @@
             "name":"Chef-install"
         },
         {
-            "uid":"573ea4360807a3965e98672b",
+            "uid":"5742e70d0807a3c2bbc2893a",
             "classification":"runshell",
-            "script":"#!\/bin\/bash\nif [ \"@@{calm_array_index}@@\" == \"0\" ]; then\neval $(python -c 'master,slaves = \"@@{calm_array_private_ip_address}@@\".split(\",\",1)\nprint \"export MASTER={}\".format(master)\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves.split(\",\"))')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_master]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json\nfi",
-            "creation_time":1463723062,
-            "credential_id":"573e95cb0807a3965e9865b6",
-            "modification_time":1463735062,
-            "version":21,
-            "critical":false,
-            "editables":[
-
-            ],
-            "name":"Mysql-Master"
-        },
-        {
-            "uid":"573ead680807a302cb659d76",
-            "classification":"runshell",
-            "script":"#!\/bin\/bash\nif [ \"@@{calm_array_index}@@\" != \"0\" ]; then\neval $(python -c 'master,slaves = \"@@{calm_array_private_ip_address}@@\".split(\",\",1)\nprint \"export MASTER={}\".format(master)\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves.split(\",\"))')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_slave]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json\nfi",
+            "script":"#!\/bin\/bash\neval $(python -c 'slaves = \"@@{calm_array_private_ip_address}@@\".split(\",\")\nprint \"export MASTER=@@{MASTERIP}@@\"\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves)')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_slave]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json",
             "creation_time":1463725416,
-            "credential_id":"573e95cb0807a3965e9865b6",
-            "modification_time":1463735062,
-            "version":18,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":33,
             "critical":false,
             "editables":[
 
@@ -93,13 +79,13 @@
             "name":"Mysql-Slave"
         },
         {
-            "uid":"573ebf4a0807a3d2d188bb9b",
+            "uid":"5742e70d0807a3c2bbc2893b",
             "classification":"runshell",
             "script":"#!\/bin\/bash\nif [ \"@@{calm_array_index}@@\" == \"0\" ]; then\neval $(python -c 'master,slaves = \"@@{calm_array_private_ip_address}@@\".split(\",\",1)\nprint \"export MASTER={}\".format(master)\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves.split(\",\"))')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_master]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json\nfi",
             "creation_time":1463729994,
-            "credential_id":"573e95cb0807a3965e9865b6",
-            "modification_time":1463735062,
-            "version":2,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":16,
             "critical":false,
             "editables":[
 
@@ -107,21 +93,99 @@
             "name":"Mysql-Master"
         },
         {
-            "uid":"573ebf4a0807a3d2d188bb9d",
+            "uid":"5742e70d0807a3c2bbc2893c",
             "classification":"runshell",
             "script":"#!\/bin\/bash\nif [ \"@@{calm_array_index}@@\" != \"0\" ]; then\neval $(python -c 'master,slaves = \"@@{calm_array_private_ip_address}@@\".split(\",\",1)\nprint \"export MASTER={}\".format(master)\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves.split(\",\"))')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_slave]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json\nfi",
             "creation_time":1463729994,
-            "credential_id":"573e95cb0807a3965e9865b6",
-            "modification_time":1463735062,
-            "version":2,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":16,
             "critical":false,
             "editables":[
 
             ],
             "name":"Mysql-Slave"
+        },
+        {
+            "uid":"5742e7700807a3c2bbc289bc",
+            "classification":"provision_aws_ec2",
+            "creation_time":1464002416,
+            "user_data":null,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "keypair":"sarath",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-b52286d0",
+                    "uuid":"sg-06fb6e7e",
+                    "uid":"sg-06fb6e7e",
+                    "classification":null,
+                    "name":"Flocker"
+                }
+            ],
+            "subnet":"subnet-575eb80e",
+            "network":"vpc-b52286d0",
+            "zone":"us-east-1",
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":12,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1464004871,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "instance_name":"Mysql-Master",
+            "instance_type":"t2.micro",
+            "critical":true
+        },
+        {
+            "uid":"5742e7700807a3c2bbc289be",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo apt-get update\nsudo apt-get install build-essential curl git vim -y\ncurl -# -L http:\/\/www.opscode.com\/chef\/install.sh | sudo bash -s --\nsudo mkdir -p \/var\/chef\/cache \/var\/chef\/cookbooks\nwget -qO- https:\/\/supermarket.chef.io\/cookbooks\/mysql-multi\/download | sudo tar xvzC \/var\/chef\/cookbooks\nsudo \/opt\/chef\/embedded\/bin\/gem install berkshelf\nsudo \/opt\/chef\/embedded\/bin\/berks vendor \/var\/chef\/cookbooks --berksfile=\/var\/chef\/cookbooks\/mysql-multi\/Berksfile\n",
+            "creation_time":1464002416,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":12,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Chef-install"
+        },
+        {
+            "uid":"5742e8620807a3c2bbc28b92",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\neval $(python -c 'slaves = \"@@{SLAVESIPS}@@\".split(\",\")\nprint \"export MASTER=@@{calm_private_ip_address}@@\"\nprint \"export SLAVES='\"'\"'\\\"%s\\\"'\"'\"'\" % '\"'\"'\", \"'\"'\"'.join(slaves)')\necho \"{\n  \\\"run_list\\\": [\n    \\\"recipe[mysql-multi::default]\\\",\n    \\\"recipe[mysql-multi::mysql_master]\\\"\n  ],\n\n  \\\"mysql-multi\\\": {\n    \\\"master\\\" : \\\"$MASTER\\\",\n    \\\"slaves\\\" : [ $SLAVES ],\n    \\\"server_repl_password\\\" : \\\"Pass@word1\\\",\n    \\\"server_root_password\\\" : \\\"Pass@word1\\\"\n  }\n}\" | tee node.json\nsudo chef-solo -j node.json",
+            "creation_time":1464002658,
+            "credential_id":"5742e70d0807a3c2bbc28930",
+            "modification_time":1464004871,
+            "version":8,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Mysql-Master"
         }
     ],
-    "uid":"573e957c0807a302cb6588d0",
+    "uid":"5742e70d0807a3c2bbc2892e",
     "classification":"blueprint",
     "autoscale_config":{
         "post_flow":null,
@@ -157,19 +221,19 @@
         {
             "tasks":[
                 {
-                    "task_id":"573ebf4a0807a3d2d188bb9b",
+                    "task_id":"5742e70d0807a3c2bbc2893b",
                     "rc_id":"cid:00000001",
                     "uid":"573ebf4a0807a3d2d188bb9c",
                     "classification":null
                 },
                 {
-                    "task_id":"573ebf4a0807a3d2d188bb9d",
+                    "task_id":"5742e70d0807a3c2bbc2893c",
                     "rc_id":"cid:00000001",
                     "uid":"573ebf4a0807a3d2d188bb9e",
                     "classification":null
                 }
             ],
-            "uid":"cid:00000002",
+            "uid":"cid:00000003",
             "classification":null,
             "eta":-1,
             "creation_time":1463729927,
@@ -177,11 +241,87 @@
 
             ],
             "has_critical_tasks":false,
-            "modification_time":1463735062,
+            "modification_time":1464004871,
             "version":0,
             "flow_type":null,
             "critical":false,
             "name":"Resilience-PostFlow"
+        },
+        {
+            "tasks":[
+                {
+                    "task_id":"5742e70d0807a3c2bbc28937",
+                    "rc_id":"cid:00000001",
+                    "uid":"5742cd280807a3c2dea53e89",
+                    "classification":null
+                },
+                {
+                    "task_id":"5742e70d0807a3c2bbc28938",
+                    "rc_id":"cid:00000001",
+                    "uid":"5742cd280807a3c2dea53e8b",
+                    "classification":null
+                },
+                {
+                    "task_id":"5742e70d0807a3c2bbc2893a",
+                    "rc_id":"cid:00000001",
+                    "uid":"5742cd280807a3c2dea53e8f",
+                    "classification":null
+                },
+                {
+                    "task_id":"5742e7700807a3c2bbc289bc",
+                    "rc_id":"cid:00000002",
+                    "uid":"5742e7700807a3c2bbc289bd",
+                    "classification":null
+                },
+                {
+                    "task_id":"5742e7700807a3c2bbc289be",
+                    "rc_id":"cid:00000002",
+                    "uid":"5742e7700807a3c2bbc289bf",
+                    "classification":null
+                },
+                {
+                    "task_id":"5742e8620807a3c2bbc28b92",
+                    "rc_id":"cid:00000002",
+                    "uid":"5742e8620807a3c2bbc28b93",
+                    "classification":null
+                }
+            ],
+            "uid":"cid:00000004",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1463995721,
+            "edges":[
+                {
+                    "dest":"5742cd280807a3c2dea53e8b",
+                    "src":"5742cd280807a3c2dea53e89",
+                    "uid":"5742cd280807a3c2dea53e90",
+                    "classification":null
+                },
+                {
+                    "dest":"5742e7700807a3c2bbc289bf",
+                    "src":"5742e7700807a3c2bbc289bd",
+                    "uid":"5742e8620807a3c2bbc28b94",
+                    "classification":null
+                },
+                {
+                    "dest":"5742e8620807a3c2bbc28b93",
+                    "src":"5742e7700807a3c2bbc289bf",
+                    "uid":"5742e8830807a3c2dea547ca",
+                    "classification":null
+                },
+                {
+                    "dest":"5742cd280807a3c2dea53e8f",
+                    "src":"5742e8620807a3c2bbc28b93",
+                    "uid":"5742e8a70807a3c2dea54868",
+                    "classification":null
+                }
+            ],
+            "has_critical_tasks":true,
+            "modification_time":1464004871,
+            "version":0,
+            "flow_type":"ACTION",
+            "critical":true,
+            "name":"create-action"
         }
     ],
     "dependencies":[
@@ -191,13 +331,13 @@
         {
             "username":"ubuntu",
             "public_key":null,
-            "uid":"573e95cb0807a3965e9865b6",
+            "uid":"5742e70d0807a3c2bbc28930",
             "classification":null,
             "secret_type":"ssh_key",
             "creation_time":1463719371,
-            "modification_time":1463735062,
+            "modification_time":1464004871,
             "secret":null,
-            "version":17,
+            "version":31,
             "name":"MYSQL"
         }
     ],
@@ -206,7 +346,7 @@
 
     ],
     "autoscale_enabled":false,
-    "name":"MYSQL-REPLICATION",
+    "name":"MYSQL-MATER-SLAVE",
     "setup_ids":{
 
     },
@@ -246,7 +386,7 @@
             },
             "cost":0.0,
             "strategy_enabled":false,
-            "provider":"573e95850807a3965e986577",
+            "provider":"5742e70d0807a3c2bbc28937",
             "service_type":"ssh",
             "config":{
                 "setup":[
@@ -255,17 +395,16 @@
                 "uid":"573e95850807a3965e98658e",
                 "classification":null,
                 "deploy":[
-                    "573e96e20807a302cb658900",
-                    "573ea4360807a3965e98672b",
-                    "573ead680807a302cb659d76"
+                    "5742e70d0807a3c2bbc28938",
+                    "5742e70d0807a3c2bbc2893a"
                 ]
             },
-            "parent":"573e95850807a3965e986578",
+            "parent":"5742e70d0807a3c2bbc2893d",
             "array_data":{
                 "tasks":[
 
                 ],
-                "uid":"573e95cb0807a3965e9865b7",
+                "uid":"5742e70d0807a3c2bbc2893e",
                 "classification":"array",
                 "creation_time":1463719371,
                 "policy_rules":[
@@ -286,7 +425,7 @@
                 },
                 "cost":0.0,
                 "strategy_enabled":false,
-                "version":18,
+                "version":33,
                 "scale_down_task":null,
                 "provider":null,
                 "config":{
@@ -299,17 +438,17 @@
                     "uid":"573e95cb0807a3965e9865d3",
                     "classification":null
                 },
-                "parent":"573e957c0807a302cb6588d0",
+                "parent":"5742e70d0807a3c2bbc2892e",
                 "scale_up_task":null,
                 "flows":[
 
                 ],
-                "modification_time":1463735062,
-                "bp_id":"573e957c0807a302cb6588d0",
+                "modification_time":1464004871,
+                "bp_id":"5742e70d0807a3c2bbc2892e",
                 "properties":[
 
                 ],
-                "count":"3",
+                "count":"2",
                 "autoscale_enabled":false,
                 "name":"MYSQL (Array)",
                 "h":0.0,
@@ -356,12 +495,36 @@
 
             ],
             "dependencies":[
-
+                {
+                    "key":"MASTERIP",
+                    "uid":"5742e7d20807a3c2dea5470c",
+                    "classification":null,
+                    "setter":{
+                        "source_id":"cid:00000002",
+                        "prop_id":"5742e7ad0807a3c2bbc28ae7",
+                        "uid":"5742e7d20807a3c2dea5473e",
+                        "classification":null
+                    }
+                }
             ],
             "service_port":22,
-            "bp_id":"573e957c0807a302cb6588d0",
+            "bp_id":"5742e70d0807a3c2bbc2892e",
             "properties":[
-
+                {
+                    "uid":"5742e7d20807a3c2dea5470d",
+                    "classification":null,
+                    "editable":false,
+                    "value":null,
+                    "key":"SLAVESIPS",
+                    "property_description":null,
+                    "property_type":"EXTERNAL",
+                    "setter":{
+                        "source_id":"5742e70d0807a3c2bbc28937",
+                        "uid":"5742e7d20807a3c2dea54744",
+                        "classification":null,
+                        "prop":"private_ip_address"
+                    }
+                }
             ],
             "autoscale_enabled":false,
             "name":"MYSQL",
@@ -402,8 +565,123 @@
                 ],
                 "initial_count":"1"
             },
-            "y":185.0,
+            "y":291.0,
             "x":296.0,
+            "os_type":"Linux"
+        },
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000002",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"5742e7700807a3c2bbc289f3",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5742e7700807a3c2bbc289bc",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5742e7700807a3c2bbc289f6",
+                "classification":null,
+                "deploy":[
+                    "5742e7700807a3c2bbc289be",
+                    "5742e8620807a3c2bbc28b92"
+                ]
+            },
+            "parent":"5742e70d0807a3c2bbc2892e",
+            "flows":[
+
+            ],
+            "dependencies":[
+                {
+                    "key":"SLAVESIPS",
+                    "uid":"5742e7d20807a3c2dea5470e",
+                    "classification":null,
+                    "setter":{
+                        "source_id":"cid:00000001",
+                        "prop_id":"5742e7d20807a3c2dea5470d",
+                        "uid":"5742e7d20807a3c2dea5474b",
+                        "classification":null
+                    }
+                }
+            ],
+            "service_port":22,
+            "bp_id":"5742e70d0807a3c2bbc2892e",
+            "properties":[
+                {
+                    "uid":"5742e7ad0807a3c2bbc28ae7",
+                    "classification":null,
+                    "editable":false,
+                    "value":null,
+                    "key":"MASTERIP",
+                    "property_description":null,
+                    "property_type":"EXTERNAL",
+                    "setter":{
+                        "source_id":"5742e7700807a3c2bbc289bc",
+                        "uid":"5742e7ad0807a3c2bbc28b22",
+                        "classification":null,
+                        "prop":"private_ip_address"
+                    }
+                }
+            ],
+            "autoscale_enabled":false,
+            "name":"Master",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"5742e7700807a3c2bbc289f4"
+            },
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5742e7700807a3c2bbc289f5",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":47.0,
+            "x":291.5,
             "os_type":"Linux"
         }
     ],
