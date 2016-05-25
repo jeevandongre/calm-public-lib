@@ -1,0 +1,12 @@
+#!/usr/bin/expect -f
+
+set timeout -1
+spawn sudo /opt/calmio/installer_scripts/setup.sh
+match_max 100000
+expect -exact "Which run level should python-calm automatically start up on? \[default:2\] >"
+send -- "3\r"
+expect -exact "Geographic area: "
+send -- "6\r"
+expect -exact "Time zone: "
+send -- "42\r"
+expect eof
