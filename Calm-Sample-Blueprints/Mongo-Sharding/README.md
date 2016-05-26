@@ -10,7 +10,7 @@ Requirements
 - Azure
 - Openstack
 
-Attributes
+Global Variables
 ----------
 - `NO_OF_REPLICASETS` - Number of replicaset required. Ex 3 (It creates 3 node Configset & NO_OF_SHARDS * 3 dataset nodes)
 - `NO_OF_SHARDS` - Number of shards to be created. Ex 2
