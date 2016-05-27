@@ -1,4 +1,4 @@
-Java 7 Oracle Blueprint
+Java 8 Oracle Blueprint
 =======================
 
 Blueprint installs Java 7 Oracle on ubuntu 14.04 server.
