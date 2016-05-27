@@ -13,7 +13,7 @@ Requirements
 Flows
 -------
 ### Backup
-Backups the database data and stores them at `MONGO_BACKUP_PATH` in configset node 0.
+Backups the database data and stores them at `_BACKUP_DIR` 
 
 
 Usage
