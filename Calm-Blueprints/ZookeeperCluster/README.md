@@ -39,4 +39,5 @@ cloudera.pkg.release=1.cdh5.7.0.p0.80
 cloudera.pkg.name=zookeeper
 cloudera.cdh.release=cdh5.7.0
 cloudera.build.time=2016.03.23-18:29:16GMT
+
 ```sh
