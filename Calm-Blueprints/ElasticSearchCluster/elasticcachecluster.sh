@@ -17,4 +17,3 @@ sudo cp /etc/elasticsearch/elasticsearch.yml /etc/elasticsearch/elasticsearch.ym
 echo "discovery.zen.ping.unicast.hosts: [${ES_NODES}]" | sudo tee -a /etc/elasticsearch/elasticsearch.yml
 sudo service elasticsearch restart
 sudo update-rc.d elasticsearch defaults 95 10
-
