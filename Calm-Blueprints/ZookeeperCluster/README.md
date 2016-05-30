@@ -1,7 +1,7 @@
 Zookeeper Cluster Blueprint
 ============================
 Blueprint creates a Zookeeper cluster. For information on version see Release Notes below. Woks well on ubuntu 14.04.
-
+The package is derived from cloudera cdh5. This is not derived from apache open source project.
 
 Requirements
 ------------
@@ -39,4 +39,4 @@ cloudera.pkg.release=1.cdh5.7.0.p0.80
 cloudera.pkg.name=zookeeper
 cloudera.cdh.release=cdh5.7.0
 cloudera.build.time=2016.03.23-18:29:16GMT
-```sh
+```
