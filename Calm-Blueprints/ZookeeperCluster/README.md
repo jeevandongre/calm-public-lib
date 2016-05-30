@@ -1,8 +1,9 @@
 Zookeeper Cluster Blueprint
 ============================
 Blueprint creates a Zookeeper cluster. For information on version see Release Notes below. Woks well on ubuntu 14.04.
-Requirements.
 
+
+Requirements
 ------------
 ### Provider
 - Aws (Default)
