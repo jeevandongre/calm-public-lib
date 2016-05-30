@@ -1,6 +1,6 @@
 Zookeeper Cluster Blueprint
 ============================
-Blueprint creates a Zookeeper cluster. For information on version see Release Notes below. Woks well on ubuntu 14.04.
+Blueprint creates a Zookeeper cluster with 3 nodes. For information on version see Release Notes below. Woks well on ubuntu 14.04.
 The package is derived from cloudera cdh5. This is not derived from apache open source project.
 
 Requirements
@@ -13,12 +13,12 @@ Requirements
 Flows
 -------
 ### Resilience 
-All the nodes of cassandra are monitored by any external agents.
+All the nodes of Zookeeper are monitored by any external agents.
 	
 Usage
 -----
 1. Upload the blueprint to calm.
-2. Create a new cassandra server.
+2. Create a new Zookeeper Cluster.
 3. Change Aws provider in overview tab, to your existing Aws settings.
 4. Run the deployment.
 
