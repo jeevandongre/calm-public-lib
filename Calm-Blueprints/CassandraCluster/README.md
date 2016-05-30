@@ -25,6 +25,7 @@ Scales Up the instance by given `NO_OF_REPLICASETS`.
 Scales Down the instance by given `NO_OF_REPLICASETS`. 
 ### Resilience
 
+
 Usage
 -----
 1. Upload the blueprint to calm.
