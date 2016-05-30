@@ -1,8 +1,8 @@
-Cassandra Single Node
+
+Rabbitmq Single Node
 =======================
 
-Blueprint create a Cassandra single node server. Recommended to use this configuration only in development mode.
-Not recommended for production mode.
+Blueprint installs the rabbitmq version 3.6.5 on ubuntu 14.04. It recommeded only for development mode.
 
 Requirements
 ------------
@@ -25,7 +25,7 @@ Stops the services.
 Usage
 -----
 1. Upload the blueprint to calm.
-2. Create a new Cassandra server.
+2. Create a new Rabbitmq server.
 3. Change Aws provider in overview tab, to your existing Aws settings.
 4. Run the deployment.
 

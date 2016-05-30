@@ -10,6 +10,10 @@ Requirements
 - Azure
 - Openstack
 
+### OS
+- Ubuntu 14.04
+
+
 Usage
 -----
 1. Upload the blueprint to calm.

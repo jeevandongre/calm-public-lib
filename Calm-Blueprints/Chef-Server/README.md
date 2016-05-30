@@ -1,19 +1,23 @@
-# Chef-Server Blueprint
+Chef-Server Blueprint
+======================
 
 This blueprint creates an instance and installs chef-server.
-##Infra
+
+Requirements
+-------------
  1.AWS
  2.Azure
  3.Openstack
  4.Vcenter
  5.Xenserver
 
-##OS
+Operting System
+----------------
  1. Centos
  2. Ubuntu
  
-
-## Quick Start
+Usage
+------
  1. Upload the blueprint to calm.
  2. Change Aws provider in overview tab.
  3. Change Credentials for chef-server under credentials tab.
