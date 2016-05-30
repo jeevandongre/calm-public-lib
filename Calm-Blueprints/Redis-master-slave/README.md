@@ -30,3 +30,8 @@ Usage
 3. Change Aws provider in overview tab, to your existing Aws settings.
 4. Change PASSWORD in the global variables.
 5. Run the deployment.
+
+TODO
+-----
+* Backup the data.
+* Restore the data.

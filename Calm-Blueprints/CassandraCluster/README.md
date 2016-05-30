@@ -13,18 +13,10 @@ Requirements
 
 Flows
 -------
-### Backup
-Backups the database data and stores them at `_BACKUP_DIR` 
 ### StartService
 Start the services in given order.
 ### StopService
 Stops the services.
-### ScaleUp
-Scales Up the instance by given `NO_OF_REPLICASETS`.
-### ScaleDown
-Scales Down the instance by given `NO_OF_REPLICASETS`. 
-### Resilience
-
 
 Usage
 -----
@@ -34,6 +26,7 @@ Usage
 4. Run the deployment.
 
 
-To be done 
------------
-1. Restore needs to be done.
+TODO
+-----
+1. Backup needs to be done.
+2. Restore needs to be done.
