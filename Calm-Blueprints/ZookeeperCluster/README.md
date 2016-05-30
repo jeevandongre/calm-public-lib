@@ -10,6 +10,11 @@ Requirements
 - Azure
 - Openstack
 
+
+### OS
+- Ubuntu 14.04
+
+
 Flows
 -------
 ### Resilience 

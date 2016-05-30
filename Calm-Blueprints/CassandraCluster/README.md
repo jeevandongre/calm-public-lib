@@ -1,7 +1,7 @@
 Cassandra Cluster Blueprint
 =======================
 
-Blueprint creates Cassandra Cluster. Creates 3 node cluster.
+Blueprint creates Cassandra Cluster with 3 node cluster.
 
 Requirements
 ------------
@@ -10,6 +10,8 @@ Requirements
 - Azure
 - Openstack
 
+### OS
+- Ubuntu 14.04
 
 Flows
 -------
