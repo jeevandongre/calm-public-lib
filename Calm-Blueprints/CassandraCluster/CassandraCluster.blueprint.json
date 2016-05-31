@@ -1,0 +1,386 @@
+{
+    "tasks":[
+        {
+            "uid":"5746b7820807a38e4fe4cba7",
+            "classification":"provision_azure",
+            "creation_time":1464252290,
+            "user_data":null,
+            "credential_id":"5746b7820807a38e4fe4cba6",
+            "storage_type":"Standard_GRS",
+            "size":"Basic_A1",
+            "subnet":"Subnet-1",
+            "network":"calmnet",
+            "image_type":"os",
+            "version":44,
+            "location":"East US",
+            "editables":[
+
+            ],
+            "vm_name":"cassandra-@@{CLUSTER_NAME}@@-@@{calm_array_index}@@",
+            "data_disk_list":[
+                {
+                    "logical_disk_size_in_gb":"2",
+                    "uid":"5746b7820807a38e4fe4cbb2",
+                    "classification":null,
+                    "disk_label":"@@{vm_name}@@-Disk0",
+                    "host_caching":"ReadWrite",
+                    "lun":"0"
+                }
+            ],
+            "tags":{
+
+            },
+            "image_name":"b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu_DAILY_BUILD-trusty-14_04_4-LTS-amd64-server-20160525-en-us-30GB",
+            "modification_time":1464603277,
+            "name":"Provision Azure",
+            "install_vm_agent":true,
+            "shutdown_behavior":"delete",
+            "credential_to_feed_vm":"5746b7820807a38e4fe4cba6",
+            "storage_name":"cassandra@@{CLUSTER_NAME}@@@@{calm_array_index}@@",
+            "critical":true,
+            "os_type":"Linux"
+        },
+        {
+            "uid":"5746b7d70807a3910a1f85c0",
+            "classification":"runshell",
+            "script":"#! \/bin\/bash\nsudo add-apt-repository -y ppa:webupd8team\/java\nsudo apt-get -y update\necho oracle-java8-installer shared\/accepted-oracle-license-v1-1 select true | sudo \/usr\/bin\/debconf-set-selections\nsudo apt-get -y install oracle-java8-installer\nsudo echo \"deb http:\/\/www.apache.org\/dist\/cassandra\/debian 35x main\" | sudo tee -a \/etc\/apt\/sources.list.d\/cassandra.sources.list\nsudo echo \"deb-src http:\/\/www.apache.org\/dist\/cassandra\/debian 35x main\" | sudo tee -a \/etc\/apt\/sources.list.d\/cassandra.sources.list\ngpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D\ngpg --export --armor F758CE318D77295D | sudo apt-key add -\ngpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00\ngpg --export --armor 2B5C1B00 | sudo apt-key add -\ngpg --keyserver pgp.mit.edu --recv-keys 0353B12C\ngpg --export --armor 0353B12C | sudo apt-key add -\nsudo apt-get -y update\nsudo apt-get -o Dpkg::Options::=\"--force-confnew\" install -y cassandra\nsudo service cassandra stop\nsudo rm -rf \/var\/lib\/cassandra\/data\/system\/*\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27@@{CLUSTER_NAME}@@\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra start",
+            "creation_time":1464252375,
+            "credential_id":"5746b7820807a38e4fe4cba6",
+            "modification_time":1464603277,
+            "version":43,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"CassandraCluster"
+        },
+        {
+            "uid":"5747f67a0807a3b54ed70d24",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27@@{CLUSTER_NAME}@@\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra restart",
+            "creation_time":1464333946,
+            "credential_id":"5746b7820807a38e4fe4cba6",
+            "modification_time":1464603277,
+            "version":9,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Reconfiguration"
+        }
+    ],
+    "uid":"5746b7820807a38e4fe4cbac",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5746b7820807a38e4fe4cbc3",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "cost":0.0,
+    "strategy_enabled":false,
+    "environment":"default",
+    "provider":null,
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5746b7820807a38e4fe4cbc4",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.7.2",
+    "description":"CassandraCluster",
+    "parent":null,
+    "flows":[
+        {
+            "tasks":[
+                {
+                    "task_id":"5747f67a0807a3b54ed70d24",
+                    "rc_id":"cid:00000001",
+                    "uid":"5747f67a0807a3b54ed70d25",
+                    "classification":null
+                }
+            ],
+            "uid":"cid:00000002",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1464333946,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1464603277,
+            "version":0,
+            "flow_type":null,
+            "critical":true,
+            "name":"Post-Resilience"
+        }
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":"-----BEGIN CERTIFICATE-----\nMIID4zCCAsugAwIBAgIJAIToAW02xaWfMA0GCSqGSIb3DQEBCwUAMIGHMQswCQYD\nVQQGEwJJTjESMBAGA1UECAwJUmFqYXN0aGFuMRIwEAYDVQQHDAlCYW5nYWxvcmUx\nDzANBgNVBAoMBkNBTE1JTzEMMAoGA1UECwwDZGV2MQ8wDQYDVQQDDAZDQUxNSU8x\nIDAeBgkqhkiG9w0BCQEWEW1hZGh1bGlrYUBjYWxtLmlvMB4XDTE2MDMxNDExNDIw\nN1oXDTE3MDMxNDExNDIwN1owgYcxCzAJBgNVBAYTAklOMRIwEAYDVQQIDAlSYWph\nc3RoYW4xEjAQBgNVBAcMCUJhbmdhbG9yZTEPMA0GA1UECgwGQ0FMTUlPMQwwCgYD\nVQQLDANkZXYxDzANBgNVBAMMBkNBTE1JTzEgMB4GCSqGSIb3DQEJARYRbWFkaHVs\naWthQGNhbG0uaW8wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCbxmb8\nrMW5da4lPX+V71loE2DJeCSfmUfYYNyWMmtPoTkxhOprgQ6xhJ3bQZrlSGmnlFIU\n6akfT0xxM1m1KkiR2ouzX0HLAgG9Z2EvM0BwoG5ow9BtB9Avvi9DYe0dSB\/rOe1L\n7ZlJ67z67GGgzzWZSjtzZNZa9BDzJe6x0s4X8CLqzqcGIGNHHxSD\/eZhyh16l2W5\ntEnXotfbscEibpaGtMnaovJBMMrqnQmio7hJX+RFWZrf9NbnOXs2t+vIxIn86LSi\nxbCuhw68YMWjkSHJ29eKVopssue2vA6456I1n7PqfKCy35kEBRdeabZHpH3mAZVc\n70sMHb4zuAvE4f8PAgMBAAGjUDBOMB0GA1UdDgQWBBQeFNLnU1TsTZhLgXR3CXH1\nDxk1tzAfBgNVHSMEGDAWgBQeFNLnU1TsTZhLgXR3CXH1Dxk1tzAMBgNVHRMEBTAD\nAQH\/MA0GCSqGSIb3DQEBCwUAA4IBAQBXWMxief6slwSPzHMSMGJ3lVeEgBsn5nDE\nx60q4KZ0cZIjSU0O9R6zGGII8u0+G8TnDTjq7J5xVNyj+Y99huoWe7L7rVwfz\/2W\noulrp9jhw9BdSDIGEDaJVIkCgQxYVwGGP9N2Yocm0PUGXd5xh2+zBVvpoLhvuKaO\n6dIOos0xW1M2P+K53v+3QVstWRPDxPO6Kj9On0vF1R9PdYxWb3Giat2rkdUNvgHM\n6cfKKoWicz1OB1bmz8VkCoq\/zPKq4Yz2lefQoeSKGZw8ekiIzVpJ87I5UHymlf6R\nJZbo65IiSnBrGXBLGOW1BBNLoMzVg6WFqIsJHpXnY2BRTfjxrlRz\n-----END CERTIFICATE-----\n",
+            "uid":"5746b7820807a38e4fe4cba6",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1464252290,
+            "modification_time":1464603277,
+            "secret":null,
+            "version":26,
+            "name":"cassandra"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+        {
+            "uid":"5747e02a0807a33775d7dcb1",
+            "classification":null,
+            "editable":true,
+            "value":"c1",
+            "key":"CLUSTER_NAME",
+            "property_description":null,
+            "property_type":"EXTERNAL",
+            "setter":null
+        }
+    ],
+    "autoscale_enabled":false,
+    "name":"CassandraCluster",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5746b7820807a38e4fe4cbc5"
+    },
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "address":"@@{public_ip_address}@@",
+            "credential_id":null,
+            "autoscale_config":{
+                "post_flow":"Post-Resilience",
+                "cool_down_period":"1800",
+                "uid":"5747e79c0807a34b45399c00",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"20",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "cost":0.0,
+            "strategy_enabled":false,
+            "provider":"5746b7820807a38e4fe4cba7",
+            "service_type":"ssh",
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5746b7820807a38e4fe4cbbc",
+                "classification":null,
+                "deploy":[
+                    "5746b7d70807a3910a1f85c0"
+                ]
+            },
+            "parent":"5746b7820807a38e4fe4cba9",
+            "array_data":{
+                "tasks":[
+
+                ],
+                "uid":"5746b7820807a38e4fe4cbb8",
+                "classification":"array",
+                "creation_time":1464252290,
+                "policy_rules":[
+
+                ],
+                "autoscale_config":{
+                    "post_flow":null,
+                    "cool_down_period":"1800",
+                    "uid":"5746b7820807a38e4fe4cbb4",
+                    "classification":null,
+                    "alert_count":"1",
+                    "max_count":"1",
+                    "pre_flow":null,
+                    "min_count":"1",
+                    "listen_for":"external",
+                    "scale_by":"1",
+                    "alert_window":"1800"
+                },
+                "cost":0.0,
+                "strategy_enabled":false,
+                "version":26,
+                "scale_down_task":null,
+                "provider":null,
+                "config":{
+                    "scale_up":[
+
+                    ],
+                    "scale_down":[
+
+                    ],
+                    "uid":"5746b7820807a38e4fe4cbb7",
+                    "classification":null
+                },
+                "parent":"5746b7820807a38e4fe4cbac",
+                "scale_up_task":null,
+                "flows":[
+
+                ],
+                "modification_time":1464603277,
+                "bp_id":"5746b7820807a38e4fe4cbac",
+                "properties":[
+
+                ],
+                "count":"3",
+                "autoscale_enabled":false,
+                "name":"CassandraCluster (Array)",
+                "h":0.0,
+                "resiliency_config":{
+                    "post_flow":null,
+                    "cool_down_period":"1800",
+                    "alert_window":"1800",
+                    "classification":null,
+                    "alert_count":"1",
+                    "pre_flow":null,
+                    "listen_for":"internal",
+                    "uid":"5746b7820807a38e4fe4cbb5"
+                },
+                "resiliency_enabled":false,
+                "w":0.0,
+                "strategy_config":{
+                    "post_flow":null,
+                    "rollback_pre_flow":null,
+                    "classification":null,
+                    "rolling_factor":"100",
+                    "initial_version":null,
+                    "approval_flag":false,
+                    "upgrade_flow":null,
+                    "rollback_flow":null,
+                    "pre_flow":null,
+                    "rollback_post_flow":null,
+                    "upgrade_type":"rolling_upgrade",
+                    "uid":"5746b7820807a38e4fe4cbb6",
+                    "users":[
+
+                    ],
+                    "teams":[
+
+                    ],
+                    "emails":[
+
+                    ],
+                    "initial_count":"1"
+                },
+                "y":0.0,
+                "x":0.0
+            },
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "service_port":22,
+            "bp_id":"5746b7820807a38e4fe4cbac",
+            "properties":[
+
+            ],
+            "autoscale_enabled":true,
+            "name":"CassandraCluster",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":"Post-Resilience",
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"external",
+                "uid":"5747f7180807a3b5849b7487"
+            },
+            "resiliency_enabled":true,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5746b7820807a38e4fe4cbbb",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":220.0,
+            "x":416.815612793,
+            "os_type":"Linux"
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5746b7820807a38e4fe4cbc6",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
