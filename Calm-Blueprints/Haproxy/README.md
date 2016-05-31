@@ -17,16 +17,10 @@ Global Variables
 
 Flows
 -------
-### Backup
-Backups the database data and stores them at `MONGO_BACKUP_PATH` in configset node 0.
-### Restore
-Restores the database if there is any loss.By default restores latest data.
-### StartService
-Start the services in given order.
-### StopService
-Stops the services.
-### Resilience
-All the mongo instances are monitored by external Nagios server. when Any instance goes down an api request is made to Calm which checks and creates new instance in place of terminated/corrupted instance.
+### Update
+We can update hosts in the haproxy configuration by running this flow.
+### Upgrade
+We can upgrade the haproxy cookbook version by running this flow if there is new release of cookbook.
 
 Usage
 -----
