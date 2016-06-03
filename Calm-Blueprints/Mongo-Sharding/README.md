@@ -48,4 +48,4 @@ Usage
 Video
 -----
 
-<iframe width="854" height="480" src="https://www.youtube.com/watch?v=05CkcLx7k9U" frameborder="0" allowfullscreen></iframe>
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/05CkcLx7k9U" frameborder="0" allowfullscreen></iframe>
