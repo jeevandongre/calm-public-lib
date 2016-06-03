@@ -1,0 +1,309 @@
+{
+    "tasks":[
+        {
+            "uid":"57502153a5979a09533f7e81",
+            "classification":"provision_aws_ec2",
+            "creation_time":1464869303,
+            "user_data":null,
+            "credential_id":"575021e0a5979a09533f7ee5",
+            "keypair":"surya",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-7bda531e",
+                    "uuid":"sg-b17d6ad4",
+                    "uid":"sg-b17d6ad4",
+                    "classification":null,
+                    "name":"default"
+                }
+            ],
+            "subnet":"subnet-f64ee081",
+            "network":"vpc-7bda531e",
+            "zone":null,
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":30
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":14,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1464879971,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "region":"us-east-1",
+            "elastic_ip":{
+                "instance_id":null,
+                "domain":"standard",
+                "uid":"5750265ea5979a09533f820a",
+                "classification":null,
+                "allocation_id":null,
+                "allocate_on_create":false,
+                "release_on_delete":true,
+                "public_ip":null,
+                "association_id":null,
+                "network_interface_id":null,
+                "private_ip_address":null,
+                "network_interface_owner_id":null
+            },
+            "instance_name":"Ansible",
+            "instance_type":"t2.small",
+            "critical":true
+        },
+        {
+            "uid":"57502153a5979a09533f7e83",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo apt-get update\nsudo apt-get install software-properties-common\nsudo apt-add-repository -y ppa:ansible\/ansible\nsudo apt-get update\nsudo apt-get install -y ansible\necho -ne '\\n'",
+            "creation_time":1464869203,
+            "credential_id":"575021e0a5979a09533f7ee5",
+            "modification_time":1464879973,
+            "version":22,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Install-Ansible"
+        },
+        {
+            "uid":"575022dda5979a09533f7fdc",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\n\nansible all -i \"localhost,\" -c local -m shell -a 'echo hello world'",
+            "creation_time":1464870110,
+            "credential_id":"575021e0a5979a09533f7ee5",
+            "modification_time":1464879973,
+            "version":14,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Playbook-Testing"
+        }
+    ],
+    "uid":"57502153a5979a09533f7e87",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"57502153a5979a09533f7e9a",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "profiles":[
+        {
+            "cost":0.0,
+            "uid":"57502153a5979a09533f7e82",
+            "classification":"resource_profile",
+            "service_port":22,
+            "address":"@@{public_ip_address}@@",
+            "creation_time":1464869203,
+            "modification_time":1464879971,
+            "version":15,
+            "provider":"57502153a5979a09533f7e81",
+            "service_type":"ssh",
+            "automatic_cost":false,
+            "os_type":"Linux",
+            "properties":[
+
+            ],
+            "name":"Provider 1"
+        }
+    ],
+    "strategy_enabled":false,
+    "replaced_tasks":{
+
+    },
+    "environment":"default",
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"57502153a5979a09533f7e9b",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.8.0",
+    "description":null,
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"575021e0a5979a09533f7ee5",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1464869344,
+            "modification_time":1464879971,
+            "secret":null,
+            "version":13,
+            "name":"aws"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Ansible",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"57502153a5979a09533f7e9c"
+    },
+    "current_profile":null,
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"57502153a5979a09533f7e90",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "profiles":[
+                "57502153a5979a09533f7e82"
+            ],
+            "strategy_enabled":false,
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"57502153a5979a09533f7e93",
+                "classification":null,
+                "deploy":[
+                    "57502153a5979a09533f7e83",
+                    "575022dda5979a09533f7fdc"
+                ]
+            },
+            "parent":"57502153a5979a09533f7e87",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "bp_id":"57502153a5979a09533f7e87",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Ansible",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"57502153a5979a09533f7e91"
+            },
+            "current_profile":"57502153a5979a09533f7e82",
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"57502153a5979a09533f7e92",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":124.7121887207,
+            "x":466.7012329102
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"57502153a5979a09533f7e9d",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
