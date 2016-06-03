@@ -44,3 +44,8 @@ Usage
 4. Change in `Nagios` variable in global variables.
 5. Change Credentials for Mongo & Nagios under credentials tab.
 6. Run the deployment.
+
+Video
+-----
+
+<iframe width="854" height="480" src="https://www.youtube.com/watch?v=05CkcLx7k9U" frameborder="0" allowfullscreen></iframe>
