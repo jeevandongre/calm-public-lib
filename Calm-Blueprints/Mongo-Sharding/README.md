@@ -49,3 +49,5 @@ Video
 -----
 
 <iframe width="1280" height="720" src="https://www.youtube.com/embed/05CkcLx7k9U" frameborder="0" allowfullscreen></iframe>
+
+![alt text](https://calm.io/wp-content/uploads/2016/05/calm_logo_rgb-copy.png "Calm.io")
