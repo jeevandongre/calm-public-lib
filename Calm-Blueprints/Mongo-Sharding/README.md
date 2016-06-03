@@ -48,6 +48,6 @@ Usage
 Video
 -----
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=05CkcLx7k9U" target="_blank"><img src="http://img.youtube.com/vi/05CkcLx7k9U/0.jpg" alt="MONGO DEMO" width="640" height="480" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=05CkcLx7k9U" target="_blank"><img src="http://img.youtube.com/vi/05CkcLx7k9U/sddefault.jpg" alt="MONGO DEMO" width="640" height="480" border="10" /></a>
 
 ![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")
