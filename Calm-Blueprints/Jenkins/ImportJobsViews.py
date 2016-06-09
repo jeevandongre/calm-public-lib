@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import jenkins,os
 
 jenkins_url='http://localhost:8080'
@@ -31,7 +30,6 @@ for job in os.listdir("./tmp_jobs/jobs"):
   if check_job(job) != 0:
     print "Job {} already exists.".format(job)
     continue
-  print "Adding job {}.".format(job)
   with open("./tmp_jobs/jobs/{}/config.xml".format(job)) as job_config:
     create_job(jenkins_url,job,job_config.read())
 
@@ -40,6 +38,5 @@ for view in os.listdir("./tmp_jobs/views"):
   if check_view(view) != 0:
     print "View {} already exists.".format(job)
     continue
-  print "Adding View {}.".format(view)
   with open("./tmp_jobs/views/{}/config.xml".format(view)) as view_config:
     create_view(jenkins_url,view,view_config.read())
