@@ -40,6 +40,6 @@ for view in os.listdir("./tmp_jobs/views"):
   if check_view(view) != 0:
     print "View {} already exists.".format(job)
     continue
-  print "Adding job {}.".format(job)
+  print "Adding view {}.".format(view)
   with open("./tmp_jobs/views/{}/config.xml".format(view)) as view_config:
     create_view(jenkins_url,view,view_config.read())
