@@ -1,6 +1,10 @@
 #!/usr/bin/python
 import jenkins,os
 
+if "@@{JOB_PATH}@@" == "":
+  print "Job path dosen't exists"
+  sys.exit(0)
+
 jenkins_url='http://localhost:8080'
 def get_user_pass():
   jenkins_user='admin'
