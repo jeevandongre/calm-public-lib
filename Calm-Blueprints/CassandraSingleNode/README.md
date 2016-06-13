@@ -11,7 +11,6 @@ Requirements
 - Azure
 - Openstack
 
-
 ### OS
 - Ubuntu 14.04
 
@@ -24,10 +23,14 @@ Stops the services.
 
 Usage
 -----
-1. Upload the blueprint to calm.
-2. Create a new Cassandra server.
-3. Change Aws provider in overview tab, to your existing Aws settings.
-4. Run the deployment.
+1. Upload the blueprint to Calm.
+2. Change Aws provider in overview tab, to your existing Aws settings.
+3. Run the deployment.
+
+Output
+------
+1. Spins a single node cassandra server. 
+
 
 TODO
 -----

@@ -11,7 +11,7 @@
             "subnet":"Subnet-1",
             "network":"calmnet",
             "image_type":"os",
-            "version":44,
+            "version":46,
             "location":"East US",
             "editables":[
 
@@ -31,7 +31,7 @@
 
             },
             "image_name":"b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu_DAILY_BUILD-trusty-14_04_4-LTS-amd64-server-20160525-en-us-30GB",
-            "modification_time":1464603277,
+            "modification_time":1464845262,
             "name":"Provision Azure",
             "install_vm_agent":true,
             "shutdown_behavior":"delete",
@@ -46,8 +46,8 @@
             "script":"#! \/bin\/bash\nsudo add-apt-repository -y ppa:webupd8team\/java\nsudo apt-get -y update\necho oracle-java8-installer shared\/accepted-oracle-license-v1-1 select true | sudo \/usr\/bin\/debconf-set-selections\nsudo apt-get -y install oracle-java8-installer\nsudo echo \"deb http:\/\/www.apache.org\/dist\/cassandra\/debian 35x main\" | sudo tee -a \/etc\/apt\/sources.list.d\/cassandra.sources.list\nsudo echo \"deb-src http:\/\/www.apache.org\/dist\/cassandra\/debian 35x main\" | sudo tee -a \/etc\/apt\/sources.list.d\/cassandra.sources.list\ngpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D\ngpg --export --armor F758CE318D77295D | sudo apt-key add -\ngpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00\ngpg --export --armor 2B5C1B00 | sudo apt-key add -\ngpg --keyserver pgp.mit.edu --recv-keys 0353B12C\ngpg --export --armor 0353B12C | sudo apt-key add -\nsudo apt-get -y update\nsudo apt-get -o Dpkg::Options::=\"--force-confnew\" install -y cassandra\nsudo service cassandra stop\nsudo rm -rf \/var\/lib\/cassandra\/data\/system\/*\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27@@{CLUSTER_NAME}@@\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra start",
             "creation_time":1464252375,
             "credential_id":"5746b7820807a38e4fe4cba6",
-            "modification_time":1464603277,
-            "version":43,
+            "modification_time":1464845262,
+            "version":45,
             "critical":false,
             "editables":[
 
@@ -60,8 +60,66 @@
             "script":"#!\/bin\/bash\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27@@{CLUSTER_NAME}@@\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra restart",
             "creation_time":1464333946,
             "credential_id":"5746b7820807a38e4fe4cba6",
-            "modification_time":1464603277,
-            "version":9,
+            "modification_time":1464845262,
+            "version":11,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Reconfiguration"
+        },
+        {
+            "uid":"574fc3900807a3d4449e6805",
+            "classification":"resource_action",
+            "creation_time":1464845200,
+            "action_type":"scale_up",
+            "credential_id":null,
+            "modification_time":1464845262,
+            "version":1,
+            "critical":true,
+            "editables":[
+
+            ],
+            "scale_by":"1",
+            "name":"Scale Up 1 - CassandraCluster"
+        },
+        {
+            "uid":"574fc3900807a3d4449e6806",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27calm\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra restart",
+            "creation_time":1464845200,
+            "credential_id":"5746b7820807a38e4fe4cba6",
+            "modification_time":1464845262,
+            "version":1,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Reconfigurtion"
+        },
+        {
+            "uid":"574fc3ce0807a3a807cf681a",
+            "classification":"resource_action",
+            "creation_time":1464845262,
+            "action_type":"scale_down",
+            "credential_id":null,
+            "modification_time":1464845262,
+            "version":0,
+            "critical":true,
+            "editables":[
+
+            ],
+            "scale_by":"1",
+            "name":"Scale Down 1 - CassandraCluster"
+        },
+        {
+            "uid":"574fc3ce0807a3a807cf681b",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nsudo sed -i 's\/cluster_name: \\x27Test Cluster\\x27\/cluster_name: \\x27calm\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's#- seeds: \"127.0.0.1\"#- seeds: \"@@{calm_array_private_ip_address}@@\"#' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/listen_address: localhost\/listen_address: @@{private_ip_address}@@\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/rpc_address: localhost\/rpc_address: \\x27127.0.0.1\\x27\/' \/etc\/cassandra\/cassandra.yaml\nsudo sed -i 's\/endpoint_snitch: SimpleSnitch\/endpoint_snitch: GossipingPropertyFileSnitch\/' \/etc\/cassandra\/cassandra.yaml\necho \"auto_bootstrap: true\" | sudo tee -a \/etc\/cassandra\/cassandra.yaml\nsudo service cassandra restart",
+            "creation_time":1464845262,
+            "credential_id":"5746b7820807a38e4fe4cba6",
+            "modification_time":1464845262,
+            "version":0,
             "critical":false,
             "editables":[
 
@@ -105,13 +163,47 @@
         {
             "tasks":[
                 {
+                    "task_id":"574fc3900807a3d4449e6805",
+                    "rc_id":"cid:00000001",
+                    "uid":"574fc3900807a3d4449e6802",
+                    "classification":null
+                },
+                {
+                    "task_id":"574fc3900807a3d4449e6806",
+                    "rc_id":"cid:00000001",
+                    "uid":"574fc3900807a3d4449e6803",
+                    "classification":null
+                }
+            ],
+            "uid":"cid:00000002",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1464845200,
+            "edges":[
+                {
+                    "dest":"574fc3900807a3d4449e6803",
+                    "src":"574fc3900807a3d4449e6802",
+                    "uid":"574fc3900807a3d4449e6804",
+                    "classification":null
+                }
+            ],
+            "has_critical_tasks":true,
+            "modification_time":1464845262,
+            "version":0,
+            "flow_type":null,
+            "critical":true,
+            "name":"Scale Up"
+        },
+        {
+            "tasks":[
+                {
                     "task_id":"5747f67a0807a3b54ed70d24",
                     "rc_id":"cid:00000001",
                     "uid":"5747f67a0807a3b54ed70d25",
                     "classification":null
                 }
             ],
-            "uid":"cid:00000002",
+            "uid":"cid:00000003",
             "classification":null,
             "eta":-1,
             "creation_time":1464333946,
@@ -119,11 +211,45 @@
 
             ],
             "has_critical_tasks":false,
-            "modification_time":1464603277,
+            "modification_time":1464845262,
             "version":0,
             "flow_type":null,
             "critical":true,
             "name":"Post-Resilience"
+        },
+        {
+            "tasks":[
+                {
+                    "task_id":"574fc3ce0807a3a807cf681a",
+                    "rc_id":"cid:00000001",
+                    "uid":"574fc3ce0807a3a807cf6817",
+                    "classification":null
+                },
+                {
+                    "task_id":"574fc3ce0807a3a807cf681b",
+                    "rc_id":"cid:00000001",
+                    "uid":"574fc3ce0807a3a807cf6818",
+                    "classification":null
+                }
+            ],
+            "uid":"cid:00000004",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1464845262,
+            "edges":[
+                {
+                    "dest":"574fc3ce0807a3a807cf6818",
+                    "src":"574fc3ce0807a3a807cf6817",
+                    "uid":"574fc3ce0807a3a807cf6819",
+                    "classification":null
+                }
+            ],
+            "has_critical_tasks":true,
+            "modification_time":1464845262,
+            "version":0,
+            "flow_type":null,
+            "critical":true,
+            "name":"Scale Down"
         }
     ],
     "dependencies":[
@@ -137,9 +263,9 @@
             "classification":null,
             "secret_type":"ssh_key",
             "creation_time":1464252290,
-            "modification_time":1464603277,
+            "modification_time":1464845262,
             "secret":null,
-            "version":26,
+            "version":28,
             "name":"cassandra"
         }
     ],
@@ -235,7 +361,7 @@
                 },
                 "cost":0.0,
                 "strategy_enabled":false,
-                "version":26,
+                "version":28,
                 "scale_down_task":null,
                 "provider":null,
                 "config":{
@@ -253,7 +379,7 @@
                 "flows":[
 
                 ],
-                "modification_time":1464603277,
+                "modification_time":1464845262,
                 "bp_id":"5746b7820807a38e4fe4cbac",
                 "properties":[
 
