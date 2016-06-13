@@ -1,12 +1,12 @@
 {
     "tasks":[
         {
-            "uid":"5720b088a5979a11fadfd175",
+            "uid":"57569b090807a330dbc733ba",
             "classification":"provision_aws_ec2",
             "creation_time":1461672466,
             "user_data":null,
-            "credential_id":"5720b088a5979a11fadfd176",
-            "keypair":"sarath",
+            "credential_id":"57569b090807a330dbc733b6",
+            "keypair":"jeevan",
             "security_groups":[
                 {
                     "vpc_id":"vpc-b52286d0",
@@ -32,7 +32,7 @@
                 ]
             },
             "variable_cost":0.0,
-            "version":15,
+            "version":142,
             "editables":[
 
             ],
@@ -42,22 +42,22 @@
 
             },
             "fixed_cost":null,
-            "modification_time":1461843491,
+            "modification_time":1465796027,
             "public_ip":true,
             "shutdown_behavior":"terminate",
             "name":"Provision AWS EC2",
-            "instance_name":"Jenkins-Master",
+            "instance_name":"DND-Jenkins-Master",
             "instance_type":"t2.micro",
             "critical":true
         },
         {
-            "uid":"5720b088a5979a11fadfd177",
+            "uid":"57569b090807a330dbc733bb",
             "classification":"runshell",
-            "script":"#!\/bin\/bash\nwget -q -O - https:\/\/jenkins-ci.org\/debian\/jenkins-ci.org.key | sudo apt-key add -\nsudo sh -c 'echo deb http:\/\/pkg.jenkins-ci.org\/debian binary\/ > \/etc\/apt\/sources.list.d\/jenkins.list'\nsudo apt-get update\nsudo apt-get install -y jenkins\nsudo service jenkins restart",
+            "script":"#!\/bin\/bash\nset -ex\nwget -q -O - https:\/\/jenkins-ci.org\/debian\/jenkins-ci.org.key | sudo apt-key add -\nif [ \"@@{JENKINS_VERSION}@@\" == \"1.6\" ];then\n echo \"deb http:\/\/pkg.jenkins-ci.org\/debian-stable binary\/\" | sudo tee \/etc\/apt\/sources.list.d\/jenkins.list\nelif [ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ];then\n echo \"deb http:\/\/pkg.jenkins-ci.org\/debian binary\/\" | sudo tee \/etc\/apt\/sources.list.d\/jenkins.list\nelse\n echo \"Unsupported jenkins version\"\n exit 1\nfi\nsudo apt-get update\nsudo apt-get clean\nsudo apt-get autoremove\nsudo apt-get install -y openjdk-7-jdk git python-pip\nsudo apt-get install -y jenkins\nsudo service jenkins start",
             "creation_time":1461736908,
-            "credential_id":"5720b088a5979a11fadfd176",
-            "modification_time":1461843491,
-            "version":14,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465796027,
+            "version":141,
             "critical":false,
             "editables":[
 
@@ -65,21 +65,91 @@
             "name":"InstallJenkins"
         },
         {
-            "uid":"5720b088a5979a11fadfd178",
+            "uid":"57569b090807a330dbc733bc",
             "classification":"runshell",
             "script":"#!\/bin\/bash\nsudo apt-get update\nsudo apt-get upgrade jenkins\nsudo service jenkins restart",
             "creation_time":1461737183,
-            "credential_id":"5720b088a5979a11fadfd176",
-            "modification_time":1461843491,
-            "version":11,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465795983,
+            "version":89,
             "critical":false,
             "editables":[
 
             ],
             "name":"Upgrade"
+        },
+        {
+            "uid":"57580d7b0807a302beb00252",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nset -ex\ncurl -o batch-install-jenkins-plugins.sh https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/batch-install-jenkins-plugins.sh\nchmod +x batch-install-jenkins-plugins.sh\ncurl -o plugins \"@@{PLUGINS_PATH}@@\"\nsudo service jenkins stop\nsudo .\/batch-install-jenkins-plugins.sh -p plugins -d \/var\/lib\/jenkins\/plugins\nsudo service jenkins start\nsudo pip install python-jenkins\nURL=\"@@{JOB_PATH}@@\"\nif [ ! -z ${URL+x} ];then\n  if [ ! -d tmp_jobs ];then\n\tmkdir -p tmp_jobs\n  fi\ncd tmp_jobs\nwget -qO- $URL | sudo tar xvz\nfi\nsleep 20\nif [[ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ]];then\n  sudo chmod 755 -R \/var\/lib\/jenkins\/secrets\n  sudo su - -c \"chmod +r \/var\/lib\/jenkins\/secrets\/initialAdminPassword\"\nfi",
+            "creation_time":1465388411,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465796027,
+            "version":104,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"InstallJenkinsPlugins"
+        },
+        {
+            "uid":"57580df00807a3ff427d54a6",
+            "classification":"runshell",
+            "script":"#!\/usr\/bin\/python\nimport jenkins,os\n\nif \"@@{JOB_PATH}@@\" == \"\":\n  print \"Job path dosen't exists\"\n  sys.exit(0)\n\njenkins_url='http:\/\/localhost:8080'\ndef get_user_pass():\n  jenkins_user='admin'\n  with open('\/var\/lib\/jenkins\/secrets\/initialAdminPassword') as password_file:\n    jenkins_pass=password_file.read().rstrip()\n  return jenkins_user,jenkins_pass\n\ndef server_connect(jenkins_url):\n  if \"@@{JENKINS_VERSION}@@\" == \"2.6\":\n    jenkins_user,jenkins_pass=get_user_pass()\n    server = jenkins.Jenkins(jenkins_url,username=jenkins_user, password=jenkins_pass)\n  else:\n    server = jenkins.Jenkins(jenkins_url)\n  return server\n\ndef create_job(jenkins_url,job_name,job_config):\n  server=server_connect(jenkins_url)\n  server.create_job(job_name, job_config)\n\ndef create_view(jenkins_url,view_name,view_config):\n  server=server_connect(jenkins_url)\n  server.create_view(view_name,view_config)\n\ndef check_job(job_name):\n  server=server_connect(jenkins_url)\n  jobs = server.get_jobs()\n  for job in jobs:\n    if job['fullname'] == job_name:\n      return 1\n  return 0\n\ndef check_view(view_name):\n  server=server_connect(jenkins_url)\n  views = server.get_views()\n  for view in views:\n    if view['name'] == view_name:\n       return 1\n  return 0\n\nfor job in os.listdir(\".\/tmp_jobs\/jobs\"):\n  if check_job(job) != 0:\n    print \"Job {} already exists.\".format(job)\n    continue\n  print \"Adding job {}.\".format(job)\n  with open(\".\/tmp_jobs\/jobs\/{}\/config.xml\".format(job)) as job_config:\n    create_job(jenkins_url,job,job_config.read())\n\n\nfor view in os.listdir(\".\/tmp_jobs\/views\"):\n  if check_view(view) != 0:\n    print \"View {} already exists.\".format(job)\n    continue\n  print \"Adding view {}.\".format(view)\n  with open(\".\/tmp_jobs\/views\/{}\/config.xml\".format(view)) as view_config:\n    create_view(jenkins_url,view,view_config.read())\n",
+            "creation_time":1465388528,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465796027,
+            "version":103,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"AddJobsPipelines"
+        },
+        {
+            "uid":"5759299f0807a376b842a28d",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nset -ex\nURL=\"@@{JOB_PATH}@@\"\nif [ ! -z ${URL+x} ];then\n  if [ ! -d tmp_jobs ];then\n\tmkdir -p tmp_jobs\n  fi\ncd tmp_jobs\nwget -qO- $URL | sudo tar xvz\nfi\nsleep 20",
+            "creation_time":1465461151,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465795983,
+            "version":37,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"DownloadJobs"
+        },
+        {
+            "uid":"57592a280807a373edb93a59",
+            "classification":"runshell",
+            "script":"#!\/usr\/bin\/python\nimport jenkins,os,sys\nif \"@@{JOB_PATH}@@\" == \"\":\n  print \"Job path dosen't exists\"\n  sys.exit(0)\n\njenkins_url='http:\/\/localhost:8080'\n\ndef create_job(jenkins_url,job_name,job_config):\n  server = jenkins.Jenkins(jenkins_url)\n  server.create_job(job_name, job_config)\n\ndef create_view(jenkins_url,view_name,view_config):\n  server = jenkins.Jenkins(jenkins_url)\n  server.create_view(view_name,view_config)\n\ndef check_job(job_name):\n  server = jenkins.Jenkins(jenkins_url)\n  jobs = server.get_jobs()\n  for job in jobs:\n    if job['fullname'] == job_name:\n      return 1\n  return 0\n\ndef check_view(view_name):\n  server = jenkins.Jenkins(jenkins_url)\n  views = server.get_views()\n  for view in views:\n    if view['name'] == view_name:\n       return 1\n  return 0\n\nfor job in os.listdir(\".\/tmp_jobs\/jobs\"):\n  if check_job(job) != 0:\n    print \"Job {} already exists.\".format(job)\n    continue\n    print \"Adding job {}.\".format(job)\n  with open(\".\/tmp_jobs\/jobs\/{}\/config.xml\".format(job)) as job_config:\n    create_job(jenkins_url,job,job_config.read())\n\n\nfor view in os.listdir(\".\/tmp_jobs\/views\"):\n  if check_view(view) != 0:\n    print \"View {} already exists.\".format(job)\n    continue\n    print \"Adding view {}.\".format(view)\n  with open(\".\/tmp_jobs\/views\/{}\/config.xml\".format(view)) as view_config:\n    create_view(jenkins_url,view,view_config.read())",
+            "creation_time":1465461288,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465795983,
+            "version":35,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"AddJobsViews"
+        },
+        {
+            "uid":"5759799c0807a347f02fdbd9",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nset -ex\nif [[ \"@@{BLUEOCEAN_INSTALL}@@\" == \"yes\" ]];then\n  sudo service jenkins stop\n  curl https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/blueocean.tar.gz | sudo tar -xvzC \/var\/lib\/jenkins\/plugins\n  export JENKINS_UC=https:\/\/updates.jenkins.io\n  cd \/var\/lib\/jenkins\/plugins\n  sudo curl -o install-plugins.sh https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/install-plugins.sh\n  sudo chmod +x install-plugins.sh\n  sudo -E .\/install-plugins.sh blueocean-commons blueocean-dashboard blueocean-plugin blueocean-rest blueocean-web workflow-aggregator docker-workflow pipeline-utility-steps pipeline-stage-view git antisamy-markup-formatter matrix-auth\n  sudo service jenkins start\nfi\nif [[ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ]];then\n  sudo cat \/var\/lib\/jenkins\/secrets\/initialAdminPassword\nfi",
+            "creation_time":1465481628,
+            "credential_id":"57569b090807a330dbc733b6",
+            "modification_time":1465796027,
+            "version":55,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"GetPassword"
         }
     ],
-    "uid":"5720b088a5979a11fadfd17b",
+    "uid":"57569b090807a330dbc733b4",
     "classification":"blueprint",
     "autoscale_config":{
         "post_flow":null,
@@ -108,14 +178,14 @@
 
         ]
     },
-    "calm-version":"1.7.1",
+    "calm-version":"1.7.2",
     "description":null,
     "parent":null,
     "flows":[
         {
             "tasks":[
                 {
-                    "task_id":"5720b088a5979a11fadfd178",
+                    "task_id":"57569b090807a330dbc733bc",
                     "rc_id":"cid:00000001",
                     "uid":"572056df2ee3a369f5e9fc57",
                     "classification":null
@@ -129,11 +199,40 @@
 
             ],
             "has_critical_tasks":false,
-            "modification_time":1461843491,
+            "modification_time":1465795983,
             "version":0,
             "flow_type":null,
             "critical":false,
             "name":"Upgrade"
+        },
+        {
+            "tasks":[
+                {
+                    "task_id":"5759299f0807a376b842a28d",
+                    "rc_id":"cid:00000001",
+                    "uid":"5759299f0807a376b842a28e",
+                    "classification":null
+                },
+                {
+                    "task_id":"57592a280807a373edb93a59",
+                    "rc_id":"cid:00000001",
+                    "uid":"57592a280807a373edb93a5a",
+                    "classification":null
+                }
+            ],
+            "uid":"cid:00000003",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1465461151,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1465795983,
+            "version":0,
+            "flow_type":null,
+            "critical":false,
+            "name":"AddJobsViews"
         }
     ],
     "dependencies":[
@@ -143,19 +242,58 @@
         {
             "username":"ubuntu",
             "public_key":null,
-            "uid":"5720b088a5979a11fadfd176",
+            "uid":"57569b090807a330dbc733b6",
             "classification":null,
             "secret_type":"ssh_key",
             "creation_time":1461672466,
-            "modification_time":1461843491,
+            "modification_time":1465795983,
             "secret":null,
-            "version":14,
+            "version":92,
             "name":"jenkins"
         }
     ],
     "bp_id":null,
     "properties":[
-
+        {
+            "uid":"57580e300807a3ff427d5539",
+            "classification":null,
+            "editable":true,
+            "value":"https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/jobs.tar.gz",
+            "key":"JOB_PATH",
+            "property_description":null,
+            "property_type":"EXTERNAL",
+            "setter":null
+        },
+        {
+            "uid":"57592aea0807a376b842a309",
+            "classification":null,
+            "editable":true,
+            "value":"https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/plugins",
+            "key":"PLUGINS_PATH",
+            "property_description":null,
+            "property_type":"EXTERNAL",
+            "setter":null
+        },
+        {
+            "uid":"575979370807a35339250703",
+            "classification":null,
+            "editable":true,
+            "value":"2.6",
+            "key":"JENKINS_VERSION",
+            "property_description":null,
+            "property_type":"EXTERNAL",
+            "setter":null
+        },
+        {
+            "uid":"575ab6f80807a36ce47923d6",
+            "classification":null,
+            "editable":false,
+            "value":"yes",
+            "key":"BLUEOCEAN_INSTALL",
+            "property_description":null,
+            "property_type":"EXTERNAL",
+            "setter":null
+        }
     ],
     "autoscale_enabled":false,
     "name":"Jenkins",
@@ -198,7 +336,7 @@
             },
             "cost":0.0,
             "strategy_enabled":false,
-            "provider":"5720b088a5979a11fadfd175",
+            "provider":"57569b090807a330dbc733ba",
             "service_type":"ssh",
             "config":{
                 "setup":[
@@ -207,10 +345,13 @@
                 "uid":"571f5a122ee3a302369036e5",
                 "classification":null,
                 "deploy":[
-                    "5720b088a5979a11fadfd177"
+                    "57569b090807a330dbc733bb",
+                    "57580d7b0807a302beb00252",
+                    "57580df00807a3ff427d54a6",
+                    "5759799c0807a347f02fdbd9"
                 ]
             },
-            "parent":"5720b088a5979a11fadfd17b",
+            "parent":"57569b090807a330dbc733b4",
             "flows":[
 
             ],
@@ -218,7 +359,7 @@
 
             ],
             "service_port":22,
-            "bp_id":"5720b088a5979a11fadfd17b",
+            "bp_id":"57569b090807a330dbc733b4",
             "properties":[
 
             ],
@@ -261,8 +402,8 @@
                 ],
                 "initial_count":"1"
             },
-            "y":100.0,
-            "x":50.0,
+            "y":167.0,
+            "x":364.0,
             "os_type":"Linux"
         }
     ],
