@@ -18,3 +18,8 @@ This blueprint creates an instance and installs Puppet-master.
  2. Change provider details in overview tab.
  3. Change Credentials for puppet-master under credentials tab.
  4. Deploy the blueprint.
+
+Image
+------
+
+![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")

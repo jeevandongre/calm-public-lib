@@ -31,5 +31,15 @@ Usage
 
 TODO
 -----
-1. Backup needs to be done.
-2. Restore needs to be done.
+1. Backup 
+2. Restore
+
+
+OUTPUT
+-------
+Installs memcached on ubuntu 14.04
+
+Image
+------
+
+![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")
