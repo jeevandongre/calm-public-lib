@@ -30,9 +30,3 @@ Usage
 Output
 ------
 1. Spins a single node cassandra server. 
-
-
-TODO
------
-1. Backup needs to be done.
-2. Restore needs to be done.
