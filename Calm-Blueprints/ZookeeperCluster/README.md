@@ -45,3 +45,8 @@ cloudera.pkg.name=zookeeper
 cloudera.cdh.release=cdh5.7.0
 cloudera.build.time=2016.03.23-18:29:16GMT
 ```
+
+Image
+------
+
+![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")
