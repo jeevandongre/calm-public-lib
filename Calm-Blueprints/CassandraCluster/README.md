@@ -43,3 +43,10 @@ TODO
 -----
 1. Backup needs to be done.
 2. Restore needs to be done.
+
+Image
+------
+
+<img src="http://s3.amazonaws.com/calm-github-images/Ansible.png" alt="Ansible server" width="640" height="480" border="10" /></a>
+
+![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")
