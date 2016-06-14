@@ -36,8 +36,7 @@ TODO
 * Backup the data.
 * Restore the data.
 
-Image
-------
+
 IMAGE
 -----
 <img src="http://s3.amazonaws.com/calm-github-images/RedisMaster-slave.png" alt="Elastic Cluster" width="640" height="480" border="10" /></a>
