@@ -23,3 +23,7 @@ Usage
  3. Change Credentials for chef-server under credentials tab.
  4. Deploy the blueprint.
  5. By default it installs chef-core, reporting and pushjobs. You can change these under node taks.
+
+ Output
+ ------
+ 1.Installs a open source chef-server and brings up the node. 
