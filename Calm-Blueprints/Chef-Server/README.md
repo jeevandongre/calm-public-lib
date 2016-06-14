@@ -27,3 +27,11 @@ Usage
  Output
  ------
  1.Installs a open source chef-server and brings up the node. 
+
+
+IMAGE
+------
+
+<img src="http://s3.amazonaws.com/calm-github-images/Chef-server.png" alt="Chef-server" width="640" height="480" border="10" /></a>
+
+![alt text](http://p5.zdassets.com/hc/settings_assets/663149/200053878/mN1xL8tNpRRq3ws1id2YiA-calm_logo_white.png "Calm.io")
