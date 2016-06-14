@@ -1,0 +1,100 @@
+Input arguments:
+
+ACCESS_ID `xxxxxxx`
+SECRET_KEY `xxxxxxx`
+DB_INSTANCE_IDENTIFIER `postgres1`
+DB_SNAPSHOT_IDENTIFIER `test-snapshot`
+DB_INSTANCE_TYPE `db.t2.medium`
+DB_ENGINE `postgres`
+DB_SUBNETGROUP `test-subnetgroup`
+MULTIAZ `True`
+
+
+
+Provision script:
+
+#!/usr/bin/python
+from boto3.session import Session
+import time
+import sys
+session = Session(aws_access_key_id='@@{ACCESS_ID}@@',
+                  aws_secret_access_key='@@{SECRET_KEY}@@',
+                  region_name='us-east-1')
+client = session.client('rds')
+
+
+response = client.restore_db_instance_from_db_snapshot(
+    DBInstanceIdentifier='@@{DB_INSTANCE_IDENTIFIER}@@',
+    DBSnapshotIdentifier='@@{DB_SNAPSHOT_IDENTIFIER}@@',
+    DBInstanceClass='@@{DB_INSTANCE_TYPE}@@',
+    DBSubnetGroupName='@@{DB_SUBNETGROUP}@@',
+    MultiAZ=@@{MULTIAZ}@@,
+    DBName='@@{DBNAME}@@',
+    Engine='@@{DB_ENGINE}@@',
+)
+clock = 0
+
+while True:
+           try:
+              status = client.describe_db_instances(DBInstanceIdentifier=response['DBInstance']['DBInstanceIdentifier'])
+           except:
+              print 'Error: Not able to get status of created DB: %s .' % response['DBInstance']['DBInstanceIdentifier']
+              sys.exit(1)
+           if status['DBInstances'][0]['DBInstanceStatus'] == 'available':
+              print "ENDPOINT_ADDRESS=%s" % status['DBInstances'][0]['Endpoint']['Address']
+              print "ENDPOINT_PORT=%d" % status['DBInstances'][0]['Endpoint']['Port']
+              print "DB_IDENTIFIER=%s" % response['DBInstance']['DBInstanceIdentifier']
+              break
+           else:
+              time.sleep(3)
+              clock += 3
+              if clock == 1800:
+                 print "DB instance %s not changing to available state." % response['DBInstance']['DBInstanceIdentifier']
+                 sys.exit(1)
+                 Output arguments:
+
+                 ENDPOINT_ADDRESS
+                 ENDPOINT_PORT
+                 RDS_IDENTIFIER
+
+
+
+
+
+Delete script:
+
+Type: Python
+Requires : boto3
+
+#!/usr/bin/python
+
+from boto3.session import Session
+import time
+import sys
+session = Session(aws_access_key_id='@@{ACCESS_ID}@@',
+                 aws_secret_access_key='@@{SECRET_KEY}@@',
+                 region_name='us-east-1')
+
+client = session.client('rds')
+
+response = client.delete_db_instance(
+   DBInstanceIdentifier='@@{DB_INSTANCE_IDENTIFIER}@@',
+   SkipFinalSnapshot=True
+)
+
+while True:
+          try:
+             status = client.describe_db_instances(DBInstanceIdentifier=response['DBInstance']['DBInstanceIdentifier'])
+          except:
+             print 'Error: Not able to get status of created DB: %s .' % response['DBInstance']['DBInstanceIdentifier']
+       sys.exit(1)
+          if status['DBInstances'][0]['DBInstanceStatus'] == 'deleting':
+             break
+          else:
+             time.sleep(3)
+             clock += 3
+             if clock == 600:
+                print "DB instance %s not deleted." % response['DBInstance']['DBInstanceIdentifier']
+                sys.exit(1)
+
+sys.exit(0)
