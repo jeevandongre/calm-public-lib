@@ -30,3 +30,4 @@ Usage
 Output
 ------
 1. Spins a single node cassandra server. 
+
