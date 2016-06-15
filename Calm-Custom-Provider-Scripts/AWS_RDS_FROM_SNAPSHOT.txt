@@ -51,14 +51,12 @@ while True:
               if clock == 1800:
                  print "DB instance %s not changing to available state." % response['DBInstance']['DBInstanceIdentifier']
                  sys.exit(1)
-                 Output arguments:
 
-                 ENDPOINT_ADDRESS
-                 ENDPOINT_PORT
-                 RDS_IDENTIFIER
+Output arguments:
 
-
-
+ENDPOINT_ADDRESS
+ENDPOINT_PORT
+RDS_IDENTIFIER
 
 
 Delete script:
