@@ -1,4 +1,4 @@
-MongoSharding Blueprint
+Dockerswarm Cluster
 =======================
 
 Blueprint creates a Dockerswarm Cluster. By default this blueprint creates 3 node cluster, HAProxy and demo app.
