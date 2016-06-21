@@ -32,7 +32,7 @@
                 ]
             },
             "variable_cost":0.0,
-            "version":142,
+            "version":144,
             "editables":[
 
             ],
@@ -42,7 +42,7 @@
 
             },
             "fixed_cost":null,
-            "modification_time":1465796027,
+            "modification_time":1465896954,
             "public_ip":true,
             "shutdown_behavior":"terminate",
             "name":"Provision AWS EC2",
@@ -56,8 +56,8 @@
             "script":"#!\/bin\/bash\nset -ex\nwget -q -O - https:\/\/jenkins-ci.org\/debian\/jenkins-ci.org.key | sudo apt-key add -\nif [ \"@@{JENKINS_VERSION}@@\" == \"1.6\" ];then\n echo \"deb http:\/\/pkg.jenkins-ci.org\/debian-stable binary\/\" | sudo tee \/etc\/apt\/sources.list.d\/jenkins.list\nelif [ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ];then\n echo \"deb http:\/\/pkg.jenkins-ci.org\/debian binary\/\" | sudo tee \/etc\/apt\/sources.list.d\/jenkins.list\nelse\n echo \"Unsupported jenkins version\"\n exit 1\nfi\nsudo apt-get update\nsudo apt-get clean\nsudo apt-get autoremove\nsudo apt-get install -y openjdk-7-jdk git python-pip\nsudo apt-get install -y jenkins\nsudo service jenkins start",
             "creation_time":1461736908,
             "credential_id":"57569b090807a330dbc733b6",
-            "modification_time":1465796027,
-            "version":141,
+            "modification_time":1465896954,
+            "version":143,
             "critical":false,
             "editables":[
 
@@ -84,8 +84,8 @@
             "script":"#!\/bin\/bash\nset -ex\ncurl -o batch-install-jenkins-plugins.sh https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/batch-install-jenkins-plugins.sh\nchmod +x batch-install-jenkins-plugins.sh\ncurl -o plugins \"@@{PLUGINS_PATH}@@\"\nsudo service jenkins stop\nsudo .\/batch-install-jenkins-plugins.sh -p plugins -d \/var\/lib\/jenkins\/plugins\nsudo service jenkins start\nsudo pip install python-jenkins\nURL=\"@@{JOB_PATH}@@\"\nif [ ! -z ${URL+x} ];then\n  if [ ! -d tmp_jobs ];then\n\tmkdir -p tmp_jobs\n  fi\ncd tmp_jobs\nwget -qO- $URL | sudo tar xvz\nfi\nsleep 20\nif [[ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ]];then\n  sudo chmod 755 -R \/var\/lib\/jenkins\/secrets\n  sudo su - -c \"chmod +r \/var\/lib\/jenkins\/secrets\/initialAdminPassword\"\nfi",
             "creation_time":1465388411,
             "credential_id":"57569b090807a330dbc733b6",
-            "modification_time":1465796027,
-            "version":104,
+            "modification_time":1465896954,
+            "version":106,
             "critical":false,
             "editables":[
 
@@ -98,8 +98,8 @@
             "script":"#!\/usr\/bin\/python\nimport jenkins,os\n\nif \"@@{JOB_PATH}@@\" == \"\":\n  print \"Job path dosen't exists\"\n  sys.exit(0)\n\njenkins_url='http:\/\/localhost:8080'\ndef get_user_pass():\n  jenkins_user='admin'\n  with open('\/var\/lib\/jenkins\/secrets\/initialAdminPassword') as password_file:\n    jenkins_pass=password_file.read().rstrip()\n  return jenkins_user,jenkins_pass\n\ndef server_connect(jenkins_url):\n  if \"@@{JENKINS_VERSION}@@\" == \"2.6\":\n    jenkins_user,jenkins_pass=get_user_pass()\n    server = jenkins.Jenkins(jenkins_url,username=jenkins_user, password=jenkins_pass)\n  else:\n    server = jenkins.Jenkins(jenkins_url)\n  return server\n\ndef create_job(jenkins_url,job_name,job_config):\n  server=server_connect(jenkins_url)\n  server.create_job(job_name, job_config)\n\ndef create_view(jenkins_url,view_name,view_config):\n  server=server_connect(jenkins_url)\n  server.create_view(view_name,view_config)\n\ndef check_job(job_name):\n  server=server_connect(jenkins_url)\n  jobs = server.get_jobs()\n  for job in jobs:\n    if job['fullname'] == job_name:\n      return 1\n  return 0\n\ndef check_view(view_name):\n  server=server_connect(jenkins_url)\n  views = server.get_views()\n  for view in views:\n    if view['name'] == view_name:\n       return 1\n  return 0\n\nfor job in os.listdir(\".\/tmp_jobs\/jobs\"):\n  if check_job(job) != 0:\n    print \"Job {} already exists.\".format(job)\n    continue\n  print \"Adding job {}.\".format(job)\n  with open(\".\/tmp_jobs\/jobs\/{}\/config.xml\".format(job)) as job_config:\n    create_job(jenkins_url,job,job_config.read())\n\n\nfor view in os.listdir(\".\/tmp_jobs\/views\"):\n  if check_view(view) != 0:\n    print \"View {} already exists.\".format(job)\n    continue\n  print \"Adding view {}.\".format(view)\n  with open(\".\/tmp_jobs\/views\/{}\/config.xml\".format(view)) as view_config:\n    create_view(jenkins_url,view,view_config.read())\n",
             "creation_time":1465388528,
             "credential_id":"57569b090807a330dbc733b6",
-            "modification_time":1465796027,
-            "version":103,
+            "modification_time":1465896954,
+            "version":105,
             "critical":false,
             "editables":[
 
@@ -140,8 +140,8 @@
             "script":"#!\/bin\/bash\nset -ex\nif [[ \"@@{BLUEOCEAN_INSTALL}@@\" == \"yes\" ]];then\n  sudo service jenkins stop\n  curl https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/blueocean.tar.gz | sudo tar -xvzC \/var\/lib\/jenkins\/plugins\n  export JENKINS_UC=https:\/\/updates.jenkins.io\n  cd \/var\/lib\/jenkins\/plugins\n  sudo curl -o install-plugins.sh https:\/\/raw.githubusercontent.com\/ideadevice\/calm-public-lib\/master\/Calm-Blueprints\/Jenkins\/install-plugins.sh\n  sudo chmod +x install-plugins.sh\n  sudo -E .\/install-plugins.sh blueocean-commons blueocean-dashboard blueocean-plugin blueocean-rest blueocean-web workflow-aggregator docker-workflow pipeline-utility-steps pipeline-stage-view git antisamy-markup-formatter matrix-auth\n  sudo service jenkins start\nfi\nif [[ \"@@{JENKINS_VERSION}@@\" == \"2.6\" ]];then\n  sudo cat \/var\/lib\/jenkins\/secrets\/initialAdminPassword\nfi",
             "creation_time":1465481628,
             "credential_id":"57569b090807a330dbc733b6",
-            "modification_time":1465796027,
-            "version":55,
+            "modification_time":1465896954,
+            "version":57,
             "critical":false,
             "editables":[
 
