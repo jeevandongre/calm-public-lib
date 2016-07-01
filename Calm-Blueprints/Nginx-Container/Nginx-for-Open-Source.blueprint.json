@@ -3,7 +3,7 @@
         {
             "publish_all_ports":null,
             "tty":null,
-            "uid":"574335e87d008315b6006765",
+            "uid":"576375f9398161337aa2c151",
             "links":[
 
             ],
@@ -23,7 +23,7 @@
             "user":null,
             "hostname":null,
             "working_dir":null,
-            "version":252,
+            "version":253,
             "entrypoint":null,
             "env":[
 
@@ -56,7 +56,7 @@
                 }
             ],
             "container_id":null,
-            "modification_time":1464022553,
+            "modification_time":1466136143,
             "host":null,
             "external_links":[
 
@@ -92,7 +92,7 @@
             "cpu_shares":null
         },
         {
-            "uid":"574335e87d008315b6006766",
+            "uid":"576375f9398161337aa2c152",
             "classification":"provision_aws_ec2",
             "creation_time":1453961592,
             "user_data":null,
@@ -123,7 +123,7 @@
                 ]
             },
             "variable_cost":0.0,
-            "version":60,
+            "version":61,
             "editables":[
 
             ],
@@ -133,7 +133,7 @@
                 "Owner":""
             },
             "fixed_cost":null,
-            "modification_time":1464022553,
+            "modification_time":1466136143,
             "public_ip":true,
             "shutdown_behavior":"terminate",
             "name":"Provision AWS EC2",
@@ -142,13 +142,13 @@
             "critical":true
         },
         {
-            "uid":"574335e87d008315b6006767",
+            "uid":"576375f9398161337aa2c153",
             "classification":"runshell",
-            "script":"#!\/bin\/bash\nset -e\n\nsudo apt-get update && sudo apt-get -y install docker.io\n\necho \"DOCKER_OPTS=\\\"-H tcp:\/\/0.0.0.0:@@{docker_port}@@ -H unix:\/\/\/var\/run\/docker.sock -d\\\"\" | sudo tee \/etc\/default\/docker\nsudo gpasswd -a $USER docker\nsudo service docker restart\nsudo hostname dockerhost\nsudo ifdown eth0 && sudo ifup eth0\necho hostname=$(hostname)",
+            "script":"#!\/bin\/bash -e\n\nsudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates linux-image-extra-$(uname -r) apparmor\nsudo apt-key adv --keyserver hkp:\/\/p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D\necho 'deb https:\/\/apt.dockerproject.org\/repo ubuntu-trusty main' | sudo tee \/etc\/apt\/sources.list.d\/docker.list\nsudo apt-get update\nsudo apt-get purge lxc-docker || true # precautionary measure from documentation\nsudo apt-get install -y docker-engine\n# Map port to socket\necho \"DOCKER_OPTS=\\\"-H tcp:\/\/0.0.0.0:@@{docker_rest_port}@@ -H unix:\/\/\/var\/run\/docker.sock\\\"\" | sudo tee \/etc\/default\/docker\n#sudo groupadd docker\nsudo usermod -aG docker ubuntu\nsudo service docker restart",
             "creation_time":1452761630,
             "credential_id":null,
-            "modification_time":1464022553,
-            "version":60,
+            "modification_time":1466136143,
+            "version":61,
             "critical":false,
             "editables":[
 
@@ -156,13 +156,13 @@
             "name":"Docker Install"
         },
         {
-            "uid":"574335e87d008315b6006768",
+            "uid":"576375f9398161337aa2c154",
             "classification":"runshell",
             "script":"# concurrent docker pulls fail, so we pull ahead\ndocker pull nginx:latest",
             "creation_time":1452761630,
             "credential_id":null,
-            "modification_time":1464022553,
-            "version":60,
+            "modification_time":1466136143,
+            "version":61,
             "critical":false,
             "editables":[
 
@@ -170,7 +170,7 @@
             "name":"Pull Images"
         }
     ],
-    "uid":"574335e87d008315b600675e",
+    "uid":"576375f9398161337aa2c161",
     "classification":"blueprint",
     "autoscale_config":{
         "post_flow":null,
@@ -210,66 +210,12 @@
             "uid":"cid:00000003",
             "classification":null,
             "eta":-1,
-            "creation_time":1452273935,
-            "edges":[
-
-            ],
-            "has_critical_tasks":false,
-            "modification_time":1464022553,
-            "version":0,
-            "flow_type":null,
-            "critical":false,
-            "name":"TailLogs"
-        },
-        {
-            "tasks":[
-
-            ],
-            "uid":"cid:00000004",
-            "classification":null,
-            "eta":-1,
-            "creation_time":1442404477,
-            "edges":[
-
-            ],
-            "has_critical_tasks":false,
-            "modification_time":1464022553,
-            "version":3,
-            "flow_type":null,
-            "critical":true,
-            "name":"ScaleUp"
-        },
-        {
-            "tasks":[
-
-            ],
-            "uid":"cid:00000005",
-            "classification":null,
-            "eta":-1,
-            "creation_time":1452222161,
-            "edges":[
-
-            ],
-            "has_critical_tasks":false,
-            "modification_time":1464022553,
-            "version":0,
-            "flow_type":null,
-            "critical":true,
-            "name":"UpdateApp"
-        },
-        {
-            "tasks":[
-
-            ],
-            "uid":"cid:00000006",
-            "classification":null,
-            "eta":-1,
             "creation_time":1444734646,
             "edges":[
 
             ],
             "has_critical_tasks":false,
-            "modification_time":1464022553,
+            "modification_time":1466136143,
             "version":2,
             "flow_type":null,
             "critical":false,
@@ -279,7 +225,7 @@
             "tasks":[
 
             ],
-            "uid":"cid:00000007",
+            "uid":"cid:00000004",
             "classification":null,
             "eta":-1,
             "creation_time":1444208388,
@@ -287,11 +233,65 @@
 
             ],
             "has_critical_tasks":false,
-            "modification_time":1464022553,
+            "modification_time":1466136143,
             "version":3,
             "flow_type":null,
             "critical":true,
             "name":"ScaleDown"
+        },
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000005",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1452273935,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1466136143,
+            "version":0,
+            "flow_type":null,
+            "critical":false,
+            "name":"TailLogs"
+        },
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000006",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1442404477,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1466136143,
+            "version":3,
+            "flow_type":null,
+            "critical":true,
+            "name":"ScaleUp"
+        },
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000007",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1452222161,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1466136143,
+            "version":0,
+            "flow_type":null,
+            "critical":true,
+            "name":"UpdateApp"
         }
     ],
     "dependencies":[
@@ -314,7 +314,7 @@
         }
     ],
     "autoscale_enabled":false,
-    "name":"Nginx for Open Source",
+    "name":"Nginx for Open Source"
     "setup_ids":{
 
     },
@@ -354,7 +354,7 @@
             },
             "cost":3.0,
             "strategy_enabled":false,
-            "provider":"574335e87d008315b6006765",
+            "provider":"576375f9398161337aa2c151",
             "service_type":"ssh",
             "config":{
                 "setup":[
@@ -366,7 +366,7 @@
 
                 ]
             },
-            "parent":"574335e87d008315b600675e",
+            "parent":"576375f9398161337aa2c161",
             "flows":[
 
             ],
@@ -406,7 +406,7 @@
                 }
             ],
             "service_port":22,
-            "bp_id":"574335e87d008315b600675e",
+            "bp_id":"576375f9398161337aa2c161",
             "properties":[
                 {
                     "uid":"56900ae719105e22225fdc03",
@@ -417,7 +417,7 @@
                     "property_description":null,
                     "property_type":"EXTERNAL",
                     "setter":{
-                        "source_id":"574335e87d008315b6006765",
+                        "source_id":"576375f9398161337aa2c151",
                         "uid":"5697654319105e5675ad6858",
                         "classification":null,
                         "prop":"docker_container_ip"
@@ -490,7 +490,7 @@
             },
             "cost":9.0,
             "strategy_enabled":false,
-            "provider":"574335e87d008315b6006766",
+            "provider":"576375f9398161337aa2c152",
             "service_type":"ssh",
             "config":{
                 "setup":[
@@ -499,11 +499,11 @@
                 "uid":"5697621e19105e1b758da0ea",
                 "classification":null,
                 "deploy":[
-                    "574335e87d008315b6006767",
-                    "574335e87d008315b6006768"
+                    "576375f9398161337aa2c153",
+                    "576375f9398161337aa2c154"
                 ]
             },
-            "parent":"574335e87d008315b600675e",
+            "parent":"576375f9398161337aa2c161",
             "flows":[
 
             ],
@@ -511,7 +511,7 @@
 
             ],
             "service_port":22,
-            "bp_id":"574335e87d008315b600675e",
+            "bp_id":"576375f9398161337aa2c161",
             "properties":[
                 {
                     "uid":"5697621e19105e1b758da094",
@@ -522,7 +522,7 @@
                     "property_description":null,
                     "property_type":"EXTERNAL",
                     "setter":{
-                        "source_id":"574335e87d008315b6006766",
+                        "source_id":"576375f9398161337aa2c152",
                         "uid":"5697621e19105e1b758da0eb",
                         "classification":null,
                         "prop":"public_ip_address"
@@ -537,7 +537,7 @@
                     "property_description":null,
                     "property_type":"EXTERNAL",
                     "setter":{
-                        "source_id":"574335e87d008315b6006766",
+                        "source_id":"576375f9398161337aa2c152",
                         "uid":"5697621e19105e1b758da0ec",
                         "classification":null,
                         "prop":"private_ip_address"

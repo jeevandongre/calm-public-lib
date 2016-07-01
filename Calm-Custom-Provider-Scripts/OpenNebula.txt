@@ -1,0 +1,187 @@
+Input arguments:
+
+IMAGE
+CPU
+VCPU
+MEMORYMB
+PUBKEY
+NAME
+DISKSIZEMB
+
+
+Provision script:
+ Type : Ruby
+ Requires: Opennebula 4.12 ruby library
+ Note: Username , password need to be changed accordingly  and API END point given in script below is of E2E networks.
+
+
+#!/usr/bin/env ruby
+
+
+require 'opennebula'
+include OpenNebula
+
+# OpenNebula credentials
+CREDENTIALS = "<username>:<password>"
+# XML_RPC endpoint where OpenNebula is listening
+ENDPOINT    = "https://api.e2enetworks.com/RPC2"
+
+client = Client.new(CREDENTIALS, ENDPOINT)
+
+
+xml = OpenNebula::VirtualMachine.build_xml
+vm = OpenNebula::VirtualMachine.new(xml, client)
+vm_pool = VirtualMachinePool.new(client, -1)
+template_pool = OpenNebula::TemplatePool.new(client,-1)
+template = OpenNebula::Template.new(xml, client)
+image_pool = OpenNebula::ImagePool.new(client,-1)
+image = OpenNebula::Image.new(xml, client)
+
+template = <<-EOT
+
+CONTEXT=[
+DISK_ID="1",
+DNS_HOSTNAME="YES",
+ETH0_DNS="8.8.8.8 8.8.4.4",
+NETWORK="YES",
+SSH_PUBLIC_KEY="@@{PUBKEY}@@",
+TARGET="hdb" ]
+
+NAME = "@@{NAME}@@"
+CPU =  "@@{CPU}@@"
+MEMORY = "@@{MEMORYMB}@@"
+VCPU = "@@{VPCU}@@"
+
+DISK =  [ 
+  CLONE="YES",
+  CLONE_TARGET="SELF",
+  CLUSTER_ID="100",
+  DATASTORE="Image-Store",
+  DATASTORE_ID="107",
+  DEV_PREFIX="hd",
+  DISK_ID="0",
+  IMAGE = "",
+  IMAGE_ID="145",
+  IMAGE_UNAME = "oneadmin",
+  LN_TARGET="NONE",
+  READONLY="NO",
+  SAVE="NO",
+  SIZE="@@{DISKSIZEMB}@@",
+  SOURCE="spkd-0300.spikecloud.net.in:XenHost.lv-one-145",
+  TARGET="hda",
+  TM_MAD="lvm",
+  TYPE="BLOCK"  ]
+
+
+OS=[
+  ARCH="x86_64",
+  BOOTLOADER="pygrub",
+  ROOT="/dev/xvda1" ]
+
+SECURITY_GROUP_RULE=[
+  PROTOCOL="ALL",
+  RULE_TYPE="OUTBOUND",
+  SECURITY_GROUP_ID="0",
+  SECURITY_GROUP_NAME="default" ]
+
+SECURITY_GROUP_RULE=[
+  PROTOCOL="ALL",
+  RULE_TYPE="INBOUND",
+  SECURITY_GROUP_ID="0",
+  SECURITY_GROUP_NAME="default" ]
+
+NIC = [
+  AR_ID="2",
+  FILTER_MAC_SPOOFING="YES",   
+  NETWORK="Public-B",
+  NETWORK_ID="4",
+  NETWORK_UNAME="oneadmin",
+  NIC_ID="0",
+  SECURITY_GROUPS="0",
+  VLAN="NO"]
+
+NIC=[
+  AR_ID="0",
+  FILTER_MAC_SPOOFING="YES",
+  NETWORK="Private-B",
+  NETWORK_ID="5",
+  NETWORK_UNAME="oneadmin",
+  NIC_ID="1",
+  SECURITY_GROUPS="0",
+  VLAN="NO" ]
+
+GRAPHICS=[
+  LISTEN="0.0.0.0",
+  PORT="7953",
+  RANDOM_PASSWD="YES",
+  TYPE="VNC" ]
+
+EOT
+
+rc=vm.allocate(template)
+if OpenNebula.is_error?(rc)
+    STDERR.puts rc.message
+    exit(-1)
+else
+    puts "ID = #{vm.id.to_s}"
+end
+
+rc = vm_pool.info
+if OpenNebula.is_error?(rc)
+     puts rc.message
+     exit -1
+end
+
+vm_pool.each do |vmt|
+
+          if vmt.id == vm.id
+            xml_str = vmt.template_xml
+            doc = Nokogiri::XML(xml_str)
+            thing = doc.at_xpath('//NIC')
+            puts "IP = " + thing.at_xpath('//IP').content
+          end
+end
+
+
+
+
+Output arguments:
+
+ID
+IP
+
+
+Delete script:
+ Type : Ruby
+ Requires: Opennebula 4.12 ruby library
+ Note: Username , password need to be changed accordingly  and API END point given in script below is of E2E networks.
+
+#!/usr/bin/env ruby
+
+
+require 'opennebula'
+include OpenNebula
+
+# OpenNebula credentials
+CREDENTIALS = "<username>:<password>"
+# XML_RPC endpoint where OpenNebula is listening
+ENDPOINT    = "https://api.e2enetworks.com/RPC2"
+
+client = Client.new(CREDENTIALS, ENDPOINT)
+
+
+xml = OpenNebula::VirtualMachine.build_xml
+vm = OpenNebula::VirtualMachine.new(xml, client)
+vm_pool = VirtualMachinePool.new(client, -1)
+
+
+vmtodel = VirtualMachine.new(VirtualMachine.build_xml(@@{ID}@@),client)
+
+rc=vmtodel.delete(recreate=false)
+
+if OpenNebula.is_error?(rc)
+    puts rc.message
+    exit(-1)
+else
+    puts "#{vmtodel.id} Vm deleted"
+end
