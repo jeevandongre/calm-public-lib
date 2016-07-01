@@ -22,4 +22,12 @@
 <name>fs.defaultFS</name>
 <value>hdfs://#@#IPADDRESS#@#</value>
 </property>
+<property>
+<name>hadoop.proxyuser.mapred.groups</name>
+<value>*</value>
+</property>
+<property>
+<name>hadoop.proxyuser.mapred.hosts</name>
+<value>*</value>
+</property>
 </configuration>

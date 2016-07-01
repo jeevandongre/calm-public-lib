@@ -26,4 +26,12 @@
 <name>yarn.app.mapreduce.am.staging-dir</name>
 <value>/user</value>
 </property>
+<property>
+<name>mapreduce.jobhistory.address</name>
+<value>@#IPADDRESS#@#:10020</value>
+</property>
+<property>
+<name>mapreduce.jobhistory.webapp.address</name>
+<value>#@#IPADDRESS#@#:19888</value>
+</property>
 </configuration>
