@@ -1,3 +1,15 @@
+#name             "CreateVm"
+#maintainer       "Calm.io"
+#maintainer_email "ops.calm.io"
+#description      "This script creates VM using existing vm in system center virtual machine manager"
+
+#Input Args:
+## VM_NAME
+## VM_IMAGE
+## CPU
+## MEMORY
+#Output Args
+## HOST_IP
 
 $vmmServerName = "localhost"
 $vmName = "@@{VM_NAME}@@"
