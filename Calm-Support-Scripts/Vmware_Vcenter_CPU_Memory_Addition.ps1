@@ -1,7 +1,7 @@
 $vmip="10.0.7.219"
 $vshpereip="10.0.7.10"
-$user="root"
-$password="IDCp@ss321"
+$user="xxxxxxx"
+$password="xxxxxxxx"
 $memory="4096"
 $cpu=""
 
