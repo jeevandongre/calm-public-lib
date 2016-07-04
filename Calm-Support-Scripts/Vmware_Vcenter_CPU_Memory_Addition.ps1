@@ -1,5 +1,5 @@
-$vmip="10.0.7.219"
-$vshpereip="10.0.7.10"
+$vmip="xxxxxxxxxx"
+$vshpereip="xxxxxxxxx"
 $user="xxxxxxx"
 $password="xxxxxxxx"
 $memory="4096"
