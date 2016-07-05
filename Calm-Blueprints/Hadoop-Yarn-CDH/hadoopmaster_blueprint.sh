@@ -32,14 +32,14 @@ sudo chmod 700 /data/1/dfs/nn /nfsmount/dfs/nn
 sudo chmod go-rx /data/1/dfs/nn /nfsmount/dfs/nn
 ## File Operation
 sudo mv /etc/hadoop/conf/hdfs-site.xml /etc/hadoop/conf/hdfs-site.xml.back
-sudo wget https://raw.githubusercontent.com/jeevandongre/calm-public-lib/master/Calm-Blueprints/hadoop-cdh-yarn/templates/hdfs-site.xml -P /etc/hadoop/conf/
+sudo wget https://raw.githubusercontent.com/ideadevice/calm-public-lib/master/Calm-Blueprints/Hadoop-Yarn-CDH/templates/hdfs-site.xml -P /etc/hadoop/conf/
 sudo sed -i -e 's/#@#IPADDRESS#@#/@@{master_public_dns_name}@@/g' /etc/hadoop/conf/hdfs-site.xml
 sudo mv /etc/hadoop/conf/core-site.xml /etc/hadoop/conf/core-site.xml.backup
-sudo wget https://raw.githubusercontent.com/jeevandongre/calm-public-lib/master/Calm-Blueprints/hadoop-cdh-yarn/templates/core-site.xml -P /etc/hadoop/conf/
+sudo wget https://raw.githubusercontent.com/ideadevice/calm-public-lib/master/Calm-Blueprints/Hadoop-Yarn-CDH/templates/core-site.xml -P /etc/hadoop/conf/
 sudo sed -i -e 's/#@#IPADDRESS#@#/@@{master_public_dns_name}@@/g' /etc/hadoop/conf/core-site.xml
-sudo wget https://raw.githubusercontent.com/jeevandongre/calm-public-lib/master/Calm-Blueprints/hadoop-cdh-yarn/templates/mapred-site.xml -P /etc/hadoop/conf/
+sudo wget https://raw.githubusercontent.com/ideadevice/calm-public-lib/master/Calm-Blueprints/Hadoop-Yarn-CDH/templates/mapred-site.xml -P /etc/hadoop/conf/
 sudo mv /etc/hadoop/conf/yarn-site.xml /etc/hadoop/conf/yarn-site.xml.backup
-sudo wget https://raw.githubusercontent.com/jeevandongre/calm-public-lib/master/Calm-Blueprints/hadoop-cdh-yarn/templates/yarn-site.xml -P /etc/hadoop/conf
+sudo wget https://raw.githubusercontent.com/ideadevice/calm-public-lib/master/Calm-Blueprints/Hadoop-Yarn-CDH/templates/yarn-site.xml -P /etc/hadoop/conf
 sudo sed -i -e 's/#@#IPADDRESS#@#/@@{master_public_dns_name}@@/g' /etc/hadoop/conf/yarn-site.xml
 ## Update hdfs-site.xml
 sudo -u hdfs hdfs namenode -format
