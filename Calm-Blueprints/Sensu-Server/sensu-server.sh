@@ -24,3 +24,6 @@ sudo update-rc.d sensu-server defaults
 sudo update-rc.d sensu-api defaults
 sudo apt-get install uchiwa
 sudo service uchiwa start
+sudo mv /etc/sensu/uchiwa.json /etc/sensu/uchiwa.json.back
+sudo wget -P /etc/uchiwa.json
+sudo service uchiwa restart
