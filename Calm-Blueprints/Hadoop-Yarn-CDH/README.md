@@ -44,15 +44,18 @@ Start the services in given order.
 ### StopService
 Stops the services.
 ### ScaleUp
-Scales Up the instance by given `NO_OF_REPLICASETS`.
+Scales Up the instance by given number of nodes.
 ### ScaleDown
-Scales Down the instance by given `NO_OF_REPLICASETS`. 
+Scales Down the instance by given number of nodes. 
 
 Usage
 -----
 1. Upload the blueprint to calm.
 2. Change Aws provider in overview tab, to your existing Aws settings.
-3. Run the deployment.
+3. Change the credentials like username password and private key and public key.
+4. Change the node names accordingly.
+5. Set the number of slave node as array.
+
 
 Image
 -----
