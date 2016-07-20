@@ -1,7 +1,9 @@
-$vmip="xxxxxxxxxx"
-$vshpereip="xxxxxxxxx"
-$user="xxxxxxx"
-$password="xxxxxxxx"
+#This script will add cpu and memory to the vm of a esxi host
+
+$vmip="IP of the target vm"
+$vshpereip="Esxi host IP Address"
+$user="user name vsphere client"
+$password="password of vsphere user account"
 $memory="4096"
 $cpu=""
 
