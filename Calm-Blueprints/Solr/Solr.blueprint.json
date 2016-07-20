@@ -1,0 +1,294 @@
+{
+    "tasks":[
+        {
+            "uid":"57861f081d2e1f028909bfde",
+            "classification":"provision_aws_ec2",
+            "creation_time":1468407560,
+            "user_data":null,
+            "credential_id":"57861f081d2e1f028909bfe0",
+            "keypair":"jeevan",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-7bda531e",
+                    "uuid":"sg-00d4e17b",
+                    "uid":"sg-00d4e17b",
+                    "classification":null,
+                    "name":"Solr"
+                }
+            ],
+            "subnet":"subnet-f64ee081",
+            "network":"vpc-7bda531e",
+            "zone":null,
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":0,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1468407560,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "region":"us-east-1",
+            "elastic_ip":{
+                "instance_id":null,
+                "domain":"standard",
+                "uid":"57861f081d2e1f028909bfeb",
+                "classification":null,
+                "allocation_id":null,
+                "allocate_on_create":false,
+                "release_on_delete":true,
+                "public_ip":null,
+                "association_id":null,
+                "network_interface_id":null,
+                "private_ip_address":null,
+                "network_interface_owner_id":null
+            },
+            "instance_name":"solr",
+            "instance_type":"t2.medium",
+            "critical":true
+        },
+        {
+            "uid":"57861f081d2e1f028909bfe1",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash\nset -x\nsudo apt-get -y install software-properties-common python-software-properties\nsudo add-apt-repository -y ppa:webupd8team\/java\nsudo apt-get -y update\necho oracle-java8-installer shared\/accepted-oracle-license-v1-1 select true | sudo \/usr\/bin\/debconf-set-selections\nsudo apt-get -y install oracle-java8-installer\nwget http:\/\/mirror.fibergrid.in\/apache\/lucene\/solr\/6.1.0\/solr-6.1.0.tgz\ntar xzf solr-6.1.0.tgz solr-6.1.0\/bin\/install_solr_service.sh --strip-components=2\nsudo bash .\/install_solr_service.sh solr-6.1.0.tgz\n",
+            "creation_time":1468407560,
+            "credential_id":null,
+            "modification_time":1468407568,
+            "version":1,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Install Solr"
+        }
+    ],
+    "uid":"57861f081d2e1f028909bfe5",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"57861f081d2e1f028909bffa",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "profiles":[
+        {
+            "cost":0.0,
+            "uid":"57861f081d2e1f028909bfdf",
+            "classification":"resource_profile",
+            "service_port":22,
+            "address":"@@{public_ip_address}@@",
+            "creation_time":1468407560,
+            "modification_time":1468407560,
+            "version":0,
+            "provider":"57861f081d2e1f028909bfde",
+            "service_type":"ssh",
+            "automatic_cost":false,
+            "os_type":"Linux",
+            "properties":[
+
+            ],
+            "name":"Provider 1"
+        }
+    ],
+    "strategy_enabled":false,
+    "replaced_tasks":{
+
+    },
+    "environment":"default",
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"57861f081d2e1f028909bffb",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.8.0",
+    "description":"Install Apache Solr ",
+    "parent":null,
+    "flows":[
+
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"57861f081d2e1f028909bfe0",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1468407560,
+            "modification_time":1468407560,
+            "secret":null,
+            "version":0,
+            "name":"solr"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"Solr",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"57861f081d2e1f028909bffc"
+    },
+    "current_profile":null,
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "autoscale_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "uid":"57861f081d2e1f028909bfef",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"1",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "profiles":[
+                "57861f081d2e1f028909bfdf"
+            ],
+            "strategy_enabled":false,
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"57861f081d2e1f028909bff2",
+                "classification":null,
+                "deploy":[
+                    "57861f081d2e1f028909bfe1"
+                ]
+            },
+            "parent":"57861f081d2e1f028909bfe5",
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "bp_id":"57861f081d2e1f028909bfe5",
+            "properties":[
+
+            ],
+            "autoscale_enabled":false,
+            "name":"Service 1",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":null,
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"internal",
+                "uid":"57861f081d2e1f028909bff0"
+            },
+            "current_profile":"57861f081d2e1f028909bfdf",
+            "resiliency_enabled":false,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"57861f081d2e1f028909bff1",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":249.5,
+            "x":333.0
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"57861f081d2e1f028909bffd",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
