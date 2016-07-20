@@ -1,0 +1,425 @@
+{
+    "tasks":[
+        {
+            "uid":"5786227a1d2e1fef1bdd9e4d",
+            "classification":"provision_aws_ec2",
+            "creation_time":1468410096,
+            "user_data":null,
+            "credential_id":"578628f01d2e1f028909d647",
+            "keypair":"jeevan",
+            "security_groups":[
+                {
+                    "vpc_id":"vpc-7bda531e",
+                    "uuid":"sg-0244c979",
+                    "uid":"sg-0244c979",
+                    "classification":null,
+                    "name":"Hadoop"
+                }
+            ],
+            "subnet":"subnet-f64ee081",
+            "network":"vpc-7bda531e",
+            "zone":null,
+            "ami_name":null,
+            "storage":{
+                "Root":{
+                    "Device":"\/dev\/sda1",
+                    "delete_on_termination":true,
+                    "volume_type":"standard",
+                    "Size":8
+                },
+                "EBS":[
+
+                ]
+            },
+            "variable_cost":0.0,
+            "version":43,
+            "editables":[
+
+            ],
+            "iam_role":null,
+            "ami":"ami-a37b65c9",
+            "tags":{
+
+            },
+            "fixed_cost":null,
+            "modification_time":1468576631,
+            "public_ip":true,
+            "shutdown_behavior":"terminate",
+            "name":"Provision AWS EC2",
+            "region":"us-east-1",
+            "elastic_ip":{
+                "instance_id":null,
+                "domain":"standard",
+                "uid":"578628f01d2e1f028909d66b",
+                "classification":null,
+                "allocation_id":null,
+                "allocate_on_create":false,
+                "release_on_delete":true,
+                "public_ip":null,
+                "association_id":null,
+                "network_interface_id":null,
+                "private_ip_address":null,
+                "network_interface_owner_id":null
+            },
+            "instance_name":"zookeeper@@{calm_array_index}@@",
+            "instance_type":"t2.medium",
+            "critical":true
+        },
+        {
+            "uid":"5786227a1d2e1fef1bdd9e4e",
+            "classification":"runshell",
+            "script":"#! \/bin\/bash\nset -ex\n## Zookeep standalone verion. Installed from CDH5 apt repo. Working on Ubuntu 14.04\nsudo add-apt-repository -y ppa:webupd8team\/java\nsudo apt-get -y update\nsudo apt-get install -y python-software-properties\necho oracle-java7-installer shared\/accepted-oracle-license-v1-1 select true | sudo \/usr\/bin\/debconf-set-selections\nsudo apt-get install -y oracle-java7-installer\nwget https:\/\/archive.cloudera.com\/cdh5\/one-click-install\/trusty\/amd64\/cdh5-repository_1.0_all.deb\nsudo dpkg -i cdh5-repository_1.0_all.deb\nsudo apt-get -y update\nsudo wget 'https:\/\/archive.cloudera.com\/cdh5\/ubuntu\/trusty\/amd64\/cdh\/cloudera.list' -O \/etc\/apt\/sources.list.d\/cloudera.list\nwget https:\/\/archive.cloudera.com\/cdh5\/ubuntu\/trusty\/amd64\/cdh\/archive.key -O archive.key\nsudo apt-key add archive.key\nsudo -s <<EOF\nsudo cat <<EOT >> \/etc\/apt\/preferences.d\/cloudera.pref\nPackage: *\nPin: release o=Cloudera, l=Cloudera\nPin-Priority: 501\nEOT\nEOF\nsudo sudo apt-get -o Dpkg::Options::=\"--force-confnew\" install -y zookeeper\nsudo sudo apt-get -o Dpkg::Options::=\"--force-confnew\" install -y zookeeper-server\nsudo service zookeeper-server stop\nsudo mkdir -p \/var\/lib\/zookeeper\nsudo chown -R zookeeper \/var\/lib\/zookeeper\nnode=$((@@{calm_array_index}@@+1))\nsudo service zookeeper-server init --myid=$node\nnodes=$(echo \"@@{calm_array_private_ip_address}@@\" | tr \",\" \"\\n\")\ni=1\nfor node in $nodes; do\necho \"server.${i}=${node}:2888:3888\" | sudo tee -a \/etc\/zookeeper\/conf\/zoo.cfg\ni=$(($i+1))\ndone\nsudo service zookeeper-server start\n",
+            "creation_time":1464330726,
+            "credential_id":null,
+            "modification_time":1468576633,
+            "version":63,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"ZookeeperCluster"
+        },
+        {
+            "uid":"5786227a1d2e1fef1bdd9e4f",
+            "classification":"runshell",
+            "script":"#!\/bin\/bash \nsudo cp \/etc\/zookeeper\/conf\/zoo.cfg.template \/etc\/zookeeper\/conf\/zoo.cfg\nnode=$(echo \"@@{calm_array_private_ip_address}@@\" | tr \",\" \"\\n\")\ni=1\nfor node in $nodes; do\necho \"\" | sudo tee \/etc\/\necho \"server.${i}=${node}:2888:3888\" | sudo tee -a \/etc\/zookeeper\/conf\/zoo.cfg ;\ndone\nnode=$((@@{calm_array_index}@@+1))\necho $node | sudo tee \/var\/lib\/zookeeper\/data\/myid\nsudo service zookeeper-server init --myid=$node\nsudo service zookeeper-server restart",
+            "creation_time":1464353751,
+            "credential_id":null,
+            "modification_time":1468576631,
+            "version":21,
+            "critical":false,
+            "editables":[
+
+            ],
+            "name":"Reconfiguration"
+        }
+    ],
+    "uid":"5786227a1d2e1fef1bdd9e58",
+    "classification":"blueprint",
+    "autoscale_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "uid":"5747e9050807a33775d7e830",
+        "classification":null,
+        "alert_count":"1",
+        "max_count":"1",
+        "pre_flow":null,
+        "min_count":"1",
+        "listen_for":"external",
+        "scale_by":"1",
+        "alert_window":"1800"
+    },
+    "profiles":[
+        {
+            "cost":0.0,
+            "uid":"5786227a1d2e1fef1bdd9e52",
+            "classification":"resource_profile",
+            "service_port":22,
+            "address":"@@{public_ip_address}@@",
+            "creation_time":1468408442,
+            "modification_time":1468576631,
+            "version":17,
+            "provider":"5786227a1d2e1fef1bdd9e4d",
+            "service_type":"ssh",
+            "automatic_cost":false,
+            "os_type":"Linux",
+            "properties":[
+
+            ],
+            "name":"Default Provider 1"
+        }
+    ],
+    "strategy_enabled":false,
+    "replaced_tasks":{
+
+    },
+    "environment":"default",
+    "config":{
+        "setup":[
+
+        ],
+        "uid":"5747e9050807a33775d7e831",
+        "classification":null,
+        "deploy":[
+
+        ]
+    },
+    "calm-version":"1.8.0",
+    "description":"ZookeeperCluster",
+    "parent":null,
+    "flows":[
+        {
+            "tasks":[
+                {
+                    "uid":"574843d70807a3717056ebd0",
+                    "classification":null,
+                    "work_type":"TASK",
+                    "target_id":"cid:00000001",
+                    "target_type":"RESOURCE",
+                    "work_id":"5786227a1d2e1fef1bdd9e4f"
+                }
+            ],
+            "uid":"cid:00000002",
+            "classification":null,
+            "eta":-1,
+            "creation_time":1464353751,
+            "edges":[
+
+            ],
+            "has_critical_tasks":false,
+            "modification_time":1468576631,
+            "version":0,
+            "flow_type":null,
+            "critical":false,
+            "name":"resilience"
+        }
+    ],
+    "dependencies":[
+
+    ],
+    "credentials":[
+        {
+            "username":"ubuntu",
+            "public_key":null,
+            "uid":"578628f01d2e1f028909d647",
+            "classification":null,
+            "secret_type":"ssh_key",
+            "creation_time":1468410096,
+            "modification_time":1468576631,
+            "secret":null,
+            "version":13,
+            "name":"zookeeper"
+        }
+    ],
+    "bp_id":null,
+    "properties":[
+
+    ],
+    "autoscale_enabled":false,
+    "name":"zookeeper",
+    "setup_ids":{
+
+    },
+    "h":0.0,
+    "resiliency_config":{
+        "post_flow":null,
+        "cool_down_period":"1800",
+        "alert_window":"1800",
+        "classification":null,
+        "alert_count":"1",
+        "pre_flow":null,
+        "listen_for":"internal",
+        "uid":"5747e9050807a33775d7e832"
+    },
+    "current_profile":null,
+    "resiliency_enabled":false,
+    "architecture":[
+        {
+            "tasks":[
+
+            ],
+            "uid":"cid:00000001",
+            "classification":"compute",
+            "autoscale_config":{
+                "post_flow":"resilience",
+                "cool_down_period":"1800",
+                "uid":"574c11f70807a3abfd407f54",
+                "classification":null,
+                "alert_count":"1",
+                "max_count":"2",
+                "pre_flow":null,
+                "min_count":"1",
+                "listen_for":"external",
+                "scale_by":"1",
+                "alert_window":"1800"
+            },
+            "profiles":[
+                "5786227a1d2e1fef1bdd9e52"
+            ],
+            "strategy_enabled":false,
+            "config":{
+                "setup":[
+
+                ],
+                "uid":"5747e9ae0807a34b45399e55",
+                "classification":null,
+                "deploy":[
+                    "5786227a1d2e1fef1bdd9e4e"
+                ]
+            },
+            "parent":"5786227a1d2e1fef1bdd9e50",
+            "array_data":{
+                "tasks":[
+
+                ],
+                "uid":"5786227a1d2e1fef1bdd9e62",
+                "classification":"array",
+                "creation_time":1464330670,
+                "policy_rules":[
+
+                ],
+                "autoscale_config":{
+                    "post_flow":null,
+                    "cool_down_period":"1800",
+                    "uid":"5747e9ae0807a34b45399e4d",
+                    "classification":null,
+                    "alert_count":"1",
+                    "max_count":"1",
+                    "pre_flow":null,
+                    "min_count":"1",
+                    "listen_for":"external",
+                    "scale_by":"1",
+                    "alert_window":"1800"
+                },
+                "profiles":[
+
+                ],
+                "strategy_enabled":false,
+                "version":35,
+                "scale_down_task":null,
+                "config":{
+                    "scale_up":[
+
+                    ],
+                    "scale_down":[
+
+                    ],
+                    "uid":"5747e9ae0807a34b45399e50",
+                    "classification":null
+                },
+                "parent":"5786227a1d2e1fef1bdd9e58",
+                "scale_up_task":null,
+                "flows":[
+
+                ],
+                "modification_time":1468576631,
+                "bp_id":"5786227a1d2e1fef1bdd9e58",
+                "properties":[
+
+                ],
+                "count":"3",
+                "autoscale_enabled":false,
+                "name":"ZookeeperCluster (Array)",
+                "h":0.0,
+                "resiliency_config":{
+                    "post_flow":null,
+                    "cool_down_period":"1800",
+                    "alert_window":"1800",
+                    "classification":null,
+                    "alert_count":"1",
+                    "pre_flow":null,
+                    "listen_for":"internal",
+                    "uid":"5747e9ae0807a34b45399e4e"
+                },
+                "current_profile":null,
+                "resiliency_enabled":false,
+                "w":0.0,
+                "strategy_config":{
+                    "post_flow":null,
+                    "rollback_pre_flow":null,
+                    "classification":null,
+                    "rolling_factor":"100",
+                    "initial_version":null,
+                    "approval_flag":false,
+                    "upgrade_flow":null,
+                    "rollback_flow":null,
+                    "pre_flow":null,
+                    "rollback_post_flow":null,
+                    "upgrade_type":"rolling_upgrade",
+                    "uid":"5747e9ae0807a34b45399e4f",
+                    "users":[
+
+                    ],
+                    "teams":[
+
+                    ],
+                    "emails":[
+
+                    ],
+                    "initial_count":"1"
+                },
+                "y":0.0,
+                "x":0.0
+            },
+            "flows":[
+
+            ],
+            "dependencies":[
+
+            ],
+            "bp_id":"5786227a1d2e1fef1bdd9e58",
+            "properties":[
+
+            ],
+            "autoscale_enabled":true,
+            "name":"ZookeeperCluster",
+            "h":0.0,
+            "resiliency_config":{
+                "post_flow":"resilience",
+                "cool_down_period":"1800",
+                "alert_window":"1800",
+                "classification":null,
+                "alert_count":"1",
+                "pre_flow":null,
+                "listen_for":"external",
+                "uid":"574843fa0807a3717056ec3a"
+            },
+            "current_profile":"5786227a1d2e1fef1bdd9e52",
+            "resiliency_enabled":true,
+            "w":0.0,
+            "strategy_config":{
+                "post_flow":null,
+                "rollback_pre_flow":null,
+                "classification":null,
+                "rolling_factor":"100",
+                "initial_version":null,
+                "approval_flag":false,
+                "upgrade_flow":null,
+                "rollback_flow":null,
+                "pre_flow":null,
+                "rollback_post_flow":null,
+                "upgrade_type":"rolling_upgrade",
+                "uid":"5747e9ae0807a34b45399e54",
+                "users":[
+
+                ],
+                "teams":[
+
+                ],
+                "emails":[
+
+                ],
+                "initial_count":"1"
+            },
+            "y":300.0438842773,
+            "x":331.9780883789
+        }
+    ],
+    "w":0.0,
+    "strategy_config":{
+        "post_flow":null,
+        "rollback_pre_flow":null,
+        "classification":null,
+        "rolling_factor":"100",
+        "initial_version":null,
+        "approval_flag":false,
+        "upgrade_flow":null,
+        "rollback_flow":null,
+        "pre_flow":null,
+        "rollback_post_flow":null,
+        "upgrade_type":"rolling_upgrade",
+        "uid":"5747e9050807a33775d7e833",
+        "users":[
+
+        ],
+        "teams":[
+
+        ],
+        "emails":[
+
+        ],
+        "initial_count":"1"
+    },
+    "y":0.0,
+    "x":0.0
+}
