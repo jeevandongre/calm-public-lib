@@ -30,8 +30,9 @@ Usage
 To check the status of zookeeper 
 ---------------------------------
 
-`` echo mntr | nc localhost 2181 ``sh
-`` echo echo ruok | nc 127.0.0.1 5111 ``sh
+`` echo mntr | nc localhost 2181 ``
+
+`` echo echo ruok | nc 127.0.0.1 5111 ``
 
 Release notes 
 --------------
