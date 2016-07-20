@@ -27,6 +27,11 @@ Usage
 3. Change Aws provider in overview tab, to your existing Aws settings.
 4. Run the deployment.
 
+To check the status of zookeeper 
+---------------------------------
+
+`` echo mntr | nc localhost 2181 ``sh
+`` echo echo ruok | nc 127.0.0.1 5111 ``sh
 
 Release notes 
 --------------

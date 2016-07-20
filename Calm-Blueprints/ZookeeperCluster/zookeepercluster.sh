@@ -1,4 +1,5 @@
 #! /bin/bash
+set -ex
 ## Zookeep standalone verion. Installed from CDH5 apt repo. Working on Ubuntu 14.04
 sudo add-apt-repository -y ppa:webupd8team/java
 sudo apt-get -y update
@@ -20,14 +21,16 @@ EOT
 EOF
 sudo sudo apt-get -o Dpkg::Options::="--force-confnew" install -y zookeeper
 sudo sudo apt-get -o Dpkg::Options::="--force-confnew" install -y zookeeper-server
-mkdir -p /var/lib/zookeeper
-sudo chown -R zookeeper /var/lib/zookeeper/
-node=$(echo "@@{calm_array_private_ip_address}@@" | tr "," "\n")
+sudo service zookeeper-server stop
+sudo mkdir -p /var/lib/zookeeper
+sudo chown -R zookeeper /var/lib/zookeeper
+node=$((@@{calm_array_index}@@+1))
+sudo service zookeeper-server init --myid=$node
+nodes=$(echo "@@{calm_array_private_ip_address}@@" | tr "," "\n")
 i=1
 for node in $nodes; do
-echo "server.${i}=${node}:2888:3888" | sudo tee -a /etc/zookeeper/conf/zoo.cfg ;
+echo "server.${i}=${node}:2888:3888" | sudo tee -a /etc/zookeeper/conf/zoo.cfg
+
+i=$(($i+1))
 done
-node=$((@@{calm_array_index}@@+1))
-echo $node | sudo tee /var/lib/zookeeper/data/myid
-sudo service zookeeper-server init --myid=$node
 sudo service zookeeper-server start
