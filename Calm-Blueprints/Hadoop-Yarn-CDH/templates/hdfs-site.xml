@@ -36,4 +36,8 @@
 The address and the base port on which the dfs NameNode Web UI will listen.
 </description>
 </property>
+<property>
+<name>dfs.namenode.datanode.registration.ip-hostname-check</name>
+<value>false</value>
+</property>  
 </configuration>
